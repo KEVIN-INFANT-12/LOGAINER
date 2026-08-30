@@ -1,0 +1,66 @@
+{
+  "rainfall_1d_mm": {
+    "min": 0.0,
+    "max": 302.92999267578125
+  },
+  "rainfall_3d_mm": {
+    "min": 0.0,
+    "max": 963.0900268554688
+  },
+  "rainfall_7d_mm": {
+    "min": 0.0,
+    "max": 1859.7900390625
+  },
+  "rainfall_anomaly_score": {
+    "min": 0.0,
+    "max": 1.0
+  },
+  "flood_event_pressure": {
+    "min": 0.0,
+    "max": 1.0
+  },
+  "flood_historical_susceptibility": {
+    "min": 0.0,
+    "max": 0.800000011920929
+  },
+  "landslide_event_pressure": {
+    "min": 0.0,
+    "max": 0.8137000203132629
+  },
+  "landslide_historical_susceptibility": {
+    "min": 0.0,
+    "max": 0.8500000238418579
+  },
+  "environmental_risk_score": {
+    "min": 0.0,
+    "max": 0.8425999879837036
+  },
+  "traffic_demand_veh_day": {
+    "min": 0.0,
+    "max": 4219.5
+  },
+  "traffic_capacity_ratio": {
+    "min": 0.0,
+    "max": 1.1239999532699585
+  },
+  "current_speed_kmh": {
+    "min": 0.0,
+    "max": 39.810001373291016
+  },
+  "congestion_index": {
+    "min": 0.0,
+    "max": 1.0
+  },
+  "road_status_encoded": {
+    "min": 0.0,
+    "max": 2.0
+  },
+  "vehicle_count_density": {
+    "min": 0.0,
+    "max": 14.0
+  },
+  "landslide_event_density": {
+    "min": 0.0,
+    "max": 1.0302345752716064
+  }
+}

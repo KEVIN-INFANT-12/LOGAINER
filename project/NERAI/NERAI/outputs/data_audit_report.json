@@ -1,0 +1,639 @@
+{
+  "rainfall": {
+    "dataset": "rainfall",
+    "shape": [
+      1384487,
+      7
+    ],
+    "columns": [
+      "date",
+      "region",
+      "state",
+      "district",
+      "latitude",
+      "longitude",
+      "rainfall_mm"
+    ],
+    "missing_values": {},
+    "missing_pct": {},
+    "duplicate_rows": 0,
+    "date_columns": {
+      "date": {
+        "parseable_count": 1384487,
+        "unparseable_count": 0,
+        "min": "2016-01-01 00:00:00",
+        "max": "2025-12-31 00:00:00",
+        "median_gap_seconds": 0.0
+      }
+    },
+    "coordinates": {
+      "lat_columns": [
+        "latitude"
+      ],
+      "lon_columns": [
+        "longitude"
+      ],
+      "latitude__longitude_valid_count": 1384487,
+      "latitude__longitude_invalid_count": 0,
+      "latitude__longitude_missing_count": 0
+    }
+  },
+  "traffic": {
+    "dataset": "traffic",
+    "shape": [
+      168878,
+      57
+    ],
+    "columns": [
+      "journey_id",
+      "vehicle_id",
+      "shipment_id",
+      "timestamp",
+      "state",
+      "district",
+      "origin_latitude",
+      "origin_longitude",
+      "destination_latitude",
+      "destination_longitude",
+      "vehicle_latitude",
+      "vehicle_longitude",
+      "road_segment_id",
+      "route_step",
+      "route_total_steps",
+      "remaining_distance_km",
+      "grid_lat",
+      "grid_lon",
+      "road_class",
+      "road_length_km",
+      "free_flow_speed_kmh",
+      "road_capacity_veh_day",
+      "rainfall_1d_mm",
+      "rainfall_3d_mm",
+      "rainfall_7d_mm",
+      "rainfall_anomaly_score",
+      "flood_event_pressure",
+      "flood_historical_susceptibility",
+      "landslide_event_pressure",
+      "landslide_historical_susceptibility",
+      "environmental_risk_score",
+      "time_of_day_hour",
+      "day_of_week",
+      "peak_period_flag",
+      "season",
+      "scenario_type",
+      "traffic_demand_veh_day",
+      "traffic_capacity_ratio",
+      "current_speed_kmh",
+      "congestion_index",
+      "congestion_level",
+      "estimated_current_delay_minutes",
+      "baseline_route_eta_minutes",
+      "current_route_eta_minutes",
+      "current_route_disruption_probability",
+      "road_status",
+      "incident_type",
+      "vehicle_stopped_flag",
+      "route_deviation_flag",
+      "target_remaining_travel_time_min",
+      "target_remaining_delay_min",
+      "target_disruption_within_remaining_route",
+      "target_next_30min_congestion_index",
+      "target_next_30min_speed_kmh",
+      "recommended_action",
+      "destination_reached",
+      "data_type"
+    ],
+    "missing_values": {
+      "shipment_id": 1,
+      "timestamp": 1,
+      "state": 1,
+      "district": 1,
+      "origin_latitude": 1,
+      "origin_longitude": 1,
+      "destination_latitude": 1,
+      "destination_longitude": 1,
+      "vehicle_latitude": 1,
+      "vehicle_longitude": 1,
+      "road_segment_id": 1,
+      "route_step": 1,
+      "route_total_steps": 1,
+      "remaining_distance_km": 1,
+      "grid_lat": 1,
+      "grid_lon": 1,
+      "road_class": 1,
+      "road_length_km": 1,
+      "free_flow_speed_kmh": 1,
+      "road_capacity_veh_day": 1,
+      "rainfall_1d_mm": 1,
+      "rainfall_3d_mm": 1,
+      "rainfall_7d_mm": 1,
+      "rainfall_anomaly_score": 1,
+      "flood_event_pressure": 1,
+      "flood_historical_susceptibility": 1,
+      "landslide_event_pressure": 1,
+      "landslide_historical_susceptibility": 1,
+      "environmental_risk_score": 1,
+      "time_of_day_hour": 1,
+      "day_of_week": 1,
+      "peak_period_flag": 1,
+      "season": 1,
+      "scenario_type": 1,
+      "traffic_demand_veh_day": 1,
+      "traffic_capacity_ratio": 1,
+      "current_speed_kmh": 1,
+      "congestion_index": 1,
+      "congestion_level": 1,
+      "estimated_current_delay_minutes": 1,
+      "baseline_route_eta_minutes": 1,
+      "current_route_eta_minutes": 1,
+      "current_route_disruption_probability": 1,
+      "road_status": 1,
+      "incident_type": 1,
+      "vehicle_stopped_flag": 1,
+      "route_deviation_flag": 1,
+      "target_remaining_travel_time_min": 1,
+      "target_remaining_delay_min": 1,
+      "target_disruption_within_remaining_route": 1,
+      "target_next_30min_congestion_index": 1,
+      "target_next_30min_speed_kmh": 1,
+      "recommended_action": 1,
+      "destination_reached": 1,
+      "data_type": 1
+    },
+    "missing_pct": {
+      "shipment_id": 0.001,
+      "timestamp": 0.001,
+      "state": 0.001,
+      "district": 0.001,
+      "origin_latitude": 0.001,
+      "origin_longitude": 0.001,
+      "destination_latitude": 0.001,
+      "destination_longitude": 0.001,
+      "vehicle_latitude": 0.001,
+      "vehicle_longitude": 0.001,
+      "road_segment_id": 0.001,
+      "route_step": 0.001,
+      "route_total_steps": 0.001,
+      "remaining_distance_km": 0.001,
+      "grid_lat": 0.001,
+      "grid_lon": 0.001,
+      "road_class": 0.001,
+      "road_length_km": 0.001,
+      "free_flow_speed_kmh": 0.001,
+      "road_capacity_veh_day": 0.001,
+      "rainfall_1d_mm": 0.001,
+      "rainfall_3d_mm": 0.001,
+      "rainfall_7d_mm": 0.001,
+      "rainfall_anomaly_score": 0.001,
+      "flood_event_pressure": 0.001,
+      "flood_historical_susceptibility": 0.001,
+      "landslide_event_pressure": 0.001,
+      "landslide_historical_susceptibility": 0.001,
+      "environmental_risk_score": 0.001,
+      "time_of_day_hour": 0.001,
+      "day_of_week": 0.001,
+      "peak_period_flag": 0.001,
+      "season": 0.001,
+      "scenario_type": 0.001,
+      "traffic_demand_veh_day": 0.001,
+      "traffic_capacity_ratio": 0.001,
+      "current_speed_kmh": 0.001,
+      "congestion_index": 0.001,
+      "congestion_level": 0.001,
+      "estimated_current_delay_minutes": 0.001,
+      "baseline_route_eta_minutes": 0.001,
+      "current_route_eta_minutes": 0.001,
+      "current_route_disruption_probability": 0.001,
+      "road_status": 0.001,
+      "incident_type": 0.001,
+      "vehicle_stopped_flag": 0.001,
+      "route_deviation_flag": 0.001,
+      "target_remaining_travel_time_min": 0.001,
+      "target_remaining_delay_min": 0.001,
+      "target_disruption_within_remaining_route": 0.001,
+      "target_next_30min_congestion_index": 0.001,
+      "target_next_30min_speed_kmh": 0.001,
+      "recommended_action": 0.001,
+      "destination_reached": 0.001,
+      "data_type": 0.001
+    },
+    "duplicate_rows": 0,
+    "date_columns": {
+      "timestamp": {
+        "parseable_count": 168877,
+        "unparseable_count": 1,
+        "min": "2016-01-02 20:50:00",
+        "max": "2025-12-26 04:40:00",
+        "median_gap_seconds": 600.0
+      },
+      "time_of_day_hour": {
+        "parseable_count": 168877,
+        "unparseable_count": 1,
+        "min": "1970-01-01 00:00:00",
+        "max": "1970-01-01 00:00:00.000000023",
+        "median_gap_seconds": 0.0
+      },
+      "target_remaining_travel_time_min": {
+        "parseable_count": 168877,
+        "unparseable_count": 1,
+        "min": "1970-01-01 00:00:00",
+        "max": "1970-01-01 00:00:00.000001692",
+        "median_gap_seconds": 0.0
+      }
+    },
+    "coordinates": {
+      "lat_columns": [
+        "origin_latitude",
+        "destination_latitude",
+        "vehicle_latitude",
+        "grid_lat"
+      ],
+      "lon_columns": [
+        "origin_longitude",
+        "destination_longitude",
+        "vehicle_longitude",
+        "grid_lon"
+      ],
+      "grid_lat__grid_lon_valid_count": 168877,
+      "grid_lat__grid_lon_invalid_count": 1,
+      "grid_lat__grid_lon_missing_count": 2
+    },
+    "target_disruption_within_remaining_route_distribution": {
+      "0.0": 168742,
+      "1.0": 135,
+      "nan": 1
+    },
+    "data_type_distribution": {
+      "SYNTHETIC_JOURNEY_CORRECTED": 168877,
+      "nan": 1
+    }
+  },
+  "flood": {
+    "sheets": [
+      "README",
+      "Flood_Inventory",
+      "District_FloodedArea",
+      "District_FloodImpact",
+      "DFSI"
+    ],
+    "sheet_reports": {
+      "README": {
+        "dataset": "flood::README",
+        "shape": [
+          21,
+          1
+        ],
+        "columns": [
+          "NER Flood Dataset (Filtered)"
+        ],
+        "missing_values": {
+          "NER Flood Dataset (Filtered)": 4
+        },
+        "missing_pct": {
+          "NER Flood Dataset (Filtered)": 19.048
+        },
+        "duplicate_rows": 3,
+        "date_columns": {},
+        "coordinates": {
+          "lat_columns": [],
+          "lon_columns": []
+        }
+      },
+      "Flood_Inventory": {
+        "dataset": "flood::Flood_Inventory",
+        "shape": [
+          1299,
+          23
+        ],
+        "columns": [
+          "Unnamed: 0",
+          "UEI",
+          "Start Date",
+          "End Date",
+          "Duration(Days)",
+          "Main Cause",
+          "Location",
+          "Districts",
+          "State",
+          "Latitude",
+          "Longitude",
+          "Severity",
+          "Area Affected",
+          "Human fatality",
+          "Human injured",
+          "Human Displaced",
+          "Animal Fatality",
+          "Description of Casualties/injured",
+          "Extent of damage ",
+          "Event Source",
+          "Event Souce ID",
+          "District_LGD_Codes",
+          "State_Codes"
+        ],
+        "missing_values": {
+          "Main Cause": 6,
+          "Location": 1299,
+          "Districts": 6,
+          "Latitude": 1299,
+          "Longitude": 1299,
+          "Severity": 1299,
+          "Area Affected": 1299,
+          "Human fatality": 799,
+          "Human injured": 1215,
+          "Human Displaced": 1253,
+          "Animal Fatality": 1200,
+          "Description of Casualties/injured": 971,
+          "Extent of damage ": 741,
+          "Event Souce ID": 1299,
+          "District_LGD_Codes": 50
+        },
+        "missing_pct": {
+          "Main Cause": 0.462,
+          "Location": 100.0,
+          "Districts": 0.462,
+          "Latitude": 100.0,
+          "Longitude": 100.0,
+          "Severity": 100.0,
+          "Area Affected": 100.0,
+          "Human fatality": 61.509,
+          "Human injured": 93.533,
+          "Human Displaced": 96.459,
+          "Animal Fatality": 92.379,
+          "Description of Casualties/injured": 74.75,
+          "Extent of damage ": 57.044,
+          "Event Souce ID": 100.0,
+          "District_LGD_Codes": 3.849
+        },
+        "duplicate_rows": 0,
+        "date_columns": {
+          "Start Date": {
+            "parseable_count": 453,
+            "unparseable_count": 846,
+            "min": "1967-02-07 00:00:00",
+            "max": "2023-12-08 00:00:00",
+            "median_gap_seconds": 259200.0
+          },
+          "End Date": {
+            "parseable_count": 336,
+            "unparseable_count": 963,
+            "min": "1967-08-07 00:00:00",
+            "max": "2023-12-08 00:00:00",
+            "median_gap_seconds": 2419200.0
+          }
+        },
+        "coordinates": {
+          "lat_columns": [
+            "Latitude"
+          ],
+          "lon_columns": [
+            "Longitude"
+          ],
+          "Latitude__Longitude_valid_count": 0,
+          "Latitude__Longitude_invalid_count": 1299,
+          "Latitude__Longitude_missing_count": 2598
+        }
+      },
+      "District_FloodedArea": {
+        "dataset": "flood::District_FloodedArea",
+        "shape": [
+          103,
+          4
+        ],
+        "columns": [
+          "Dist_Name",
+          "Percent_Flooded_Area",
+          "Parmanent_Water",
+          "Corrected_Percent_Flooded_Area"
+        ],
+        "missing_values": {},
+        "missing_pct": {},
+        "duplicate_rows": 0,
+        "date_columns": {},
+        "coordinates": {
+          "lat_columns": [],
+          "lon_columns": []
+        }
+      },
+      "District_FloodImpact": {
+        "dataset": "flood::District_FloodImpact",
+        "shape": [
+          103,
+          5
+        ],
+        "columns": [
+          "Dist_Name",
+          "Human_fatality",
+          "Human_injured",
+          "Population",
+          "Mean_Flood_Duration"
+        ],
+        "missing_values": {},
+        "missing_pct": {},
+        "duplicate_rows": 0,
+        "date_columns": {},
+        "coordinates": {
+          "lat_columns": [
+            "Population"
+          ],
+          "lon_columns": []
+        }
+      },
+      "DFSI": {
+        "dataset": "flood::DFSI",
+        "shape": [
+          116,
+          3
+        ],
+        "columns": [
+          "Unnamed: 0",
+          "State_Name",
+          "DFSI"
+        ],
+        "missing_values": {},
+        "missing_pct": {},
+        "duplicate_rows": 0,
+        "date_columns": {},
+        "coordinates": {
+          "lat_columns": [],
+          "lon_columns": []
+        }
+      }
+    }
+  },
+  "landslide": {
+    "sheets": [
+      "NE India Landslides",
+      "Filter Summary"
+    ],
+    "sheet_reports": {
+      "NE India Landslides": {
+        "dataset": "landslide::NE India Landslides",
+        "shape": [
+          556,
+          32
+        ],
+        "columns": [
+          "northeast_state_approx",
+          "source_name",
+          "source_link",
+          "event_id",
+          "event_date",
+          "event_time",
+          "event_title",
+          "event_description",
+          "location_description",
+          "location_accuracy",
+          "landslide_category",
+          "landslide_trigger",
+          "landslide_size",
+          "landslide_setting",
+          "fatality_count",
+          "injury_count",
+          "storm_name",
+          "photo_link",
+          "notes",
+          "event_import_source",
+          "event_import_id",
+          "country_name",
+          "country_code",
+          "admin_division_name",
+          "admin_division_population",
+          "gazeteer_closest_point",
+          "gazeteer_distance",
+          "submitted_date",
+          "created_date",
+          "last_edited_date",
+          "longitude",
+          "latitude"
+        ],
+        "missing_values": {
+          "source_link": 3,
+          "event_time": 556,
+          "event_description": 1,
+          "location_description": 10,
+          "location_accuracy": 1,
+          "landslide_trigger": 2,
+          "landslide_size": 1,
+          "landslide_setting": 8,
+          "fatality_count": 104,
+          "injury_count": 296,
+          "storm_name": 552,
+          "photo_link": 493,
+          "notes": 533,
+          "event_import_source": 121,
+          "event_import_id": 121,
+          "country_name": 121,
+          "country_code": 121,
+          "admin_division_name": 139,
+          "admin_division_population": 121,
+          "gazeteer_closest_point": 121,
+          "gazeteer_distance": 121
+        },
+        "missing_pct": {
+          "source_link": 0.54,
+          "event_time": 100.0,
+          "event_description": 0.18,
+          "location_description": 1.799,
+          "location_accuracy": 0.18,
+          "landslide_trigger": 0.36,
+          "landslide_size": 0.18,
+          "landslide_setting": 1.439,
+          "fatality_count": 18.705,
+          "injury_count": 53.237,
+          "storm_name": 99.281,
+          "photo_link": 88.669,
+          "notes": 95.863,
+          "event_import_source": 21.763,
+          "event_import_id": 21.763,
+          "country_name": 21.763,
+          "country_code": 21.763,
+          "admin_division_name": 25.0,
+          "admin_division_population": 21.763,
+          "gazeteer_closest_point": 21.763,
+          "gazeteer_distance": 21.763
+        },
+        "duplicate_rows": 0,
+        "date_columns": {
+          "event_date": {
+            "parseable_count": 556,
+            "unparseable_count": 0,
+            "min": "2007-04-11 00:00:00",
+            "max": "2017-07-12 13:28:00",
+            "median_gap_seconds": 86400.0
+          },
+          "event_time": {
+            "parseable_count": 0,
+            "unparseable_count": 556,
+            "min": null,
+            "max": null
+          },
+          "submitted_date": {
+            "parseable_count": 556,
+            "unparseable_count": 0,
+            "min": "2014-04-01 00:00:00",
+            "max": "2017-10-31 13:49:00",
+            "median_gap_seconds": 0.0
+          },
+          "created_date": {
+            "parseable_count": 556,
+            "unparseable_count": 0,
+            "min": "2017-11-20 15:17:00",
+            "max": "2017-12-20 16:36:00",
+            "median_gap_seconds": 0.0
+          },
+          "last_edited_date": {
+            "parseable_count": 556,
+            "unparseable_count": 0,
+            "min": "2018-02-15 15:51:00",
+            "max": "2018-02-15 15:51:00",
+            "median_gap_seconds": 0.0
+          }
+        },
+        "coordinates": {
+          "lat_columns": [
+            "admin_division_population",
+            "latitude"
+          ],
+          "lon_columns": [
+            "longitude"
+          ]
+        }
+      },
+      "Filter Summary": {
+        "dataset": "landslide::Filter Summary",
+        "shape": [
+          6,
+          2
+        ],
+        "columns": [
+          "Item",
+          "Value"
+        ],
+        "missing_values": {},
+        "missing_pct": {},
+        "duplicate_rows": 0,
+        "date_columns": {},
+        "coordinates": {
+          "lat_columns": [],
+          "lon_columns": []
+        }
+      }
+    }
+  },
+  "cross_dataset_summary": {
+    "rainfall_geographic_extent": {
+      "lat_min": 22.0,
+      "lat_max": 29.25,
+      "lon_min": 88.25,
+      "lon_max": 97.25
+    },
+    "traffic_rows": 168878,
+    "rainfall_rows": 1384487,
+    "assumptions": [
+      "NER coordinate validity bounding box assumed as lat[21.5,29.5], lon[88.0,97.5] (approximate bounding box for India's North Eastern Region states); points outside this box are flagged invalid, not discarded automatically.",
+      "Traffic dataset is explicitly synthetic ('Synthetic_Traffic' in filename); it is treated as simulation-derived, not ground-truth sensor telemetry. Its per-timestep GPS/road fields are used as the spatiotemporal backbone regardless, since it is the only journey-level dataset provided.",
+      "Rainfall and landslide/flood datasets are treated as the closest available ground-truth environmental observations.",
+      "No missing values are imputed in this audit stage; imputation only happens in feature engineering, each imputation choice is logged there."
+    ]
+  }
+}

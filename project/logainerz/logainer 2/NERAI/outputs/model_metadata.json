@@ -1,0 +1,80 @@
+{
+  "model_name": "logainer_convlstm",
+  "version": "v1",
+  "training_period": "2016-2022",
+  "validation_period": "2023-2024",
+  "test_period": "2025",
+  "features": [
+    "rainfall_1d_mm",
+    "rainfall_3d_mm",
+    "rainfall_7d_mm",
+    "rainfall_anomaly_score",
+    "flood_event_pressure",
+    "flood_historical_susceptibility",
+    "landslide_event_pressure",
+    "landslide_historical_susceptibility",
+    "environmental_risk_score",
+    "traffic_demand_veh_day",
+    "traffic_capacity_ratio",
+    "current_speed_kmh",
+    "congestion_index",
+    "road_status_encoded",
+    "vehicle_count_density",
+    "landslide_event_density"
+  ],
+  "sequence_length": 6,
+  "prediction_horizon_steps": 3,
+  "prediction_horizon_note": "3 populated-hour-bins ahead (episodic data; not a fixed clock interval)",
+  "grid_size": 16,
+  "bbox": {
+    "lat_min": 21.5,
+    "lat_max": 29.5,
+    "lon_min": 88.0,
+    "lon_max": 97.5
+  },
+  "normalization": "per-channel min-max, fit on TRAIN split only (outputs/normalization_stats.json)",
+  "target": "disruption_risk_composite",
+  "thresholds": {
+    "classification_threshold": 0.6100000000000001,
+    "low": 0.33,
+    "medium": 0.66
+  },
+  "metrics": {
+    "accuracy": 0.6760665220535069,
+    "precision": 0.29942418426103645,
+    "recall": 0.6527196652719666,
+    "f1": 0.4105263157894737,
+    "roc_auc": 0.7412404541065629,
+    "pr_auc": 0.3412765333877316,
+    "brier_score": 0.2319192328872099,
+    "confusion_matrix": [
+      [
+        779,
+        365
+      ],
+      [
+        83,
+        156
+      ]
+    ],
+    "threshold_used": 0.6100000000000001
+  },
+  "model_config": {
+    "sequence_length": 6,
+    "grid_height": 16,
+    "grid_width": 16,
+    "num_channels": 16,
+    "filters": [
+      32,
+      16
+    ],
+    "kernel_size": [
+      3,
+      3
+    ],
+    "dropout": 0.3,
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 25
+  }
+}

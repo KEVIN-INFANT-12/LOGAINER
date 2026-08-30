@@ -1,0 +1,71 @@
+{
+  "primary_target": "disruption_risk_composite",
+  "target_definition": "Binary label = 1 if ANY grid cell in NER experiences SEVERE congestion, a logged incident (TRAFFIC_JAM/LANDSLIDE/FLOOD), or non-OPEN road_status within the hour bin at t+PREDICTION_HORIZON_STEPS.",
+  "pivot_from_original_target": "The dataset's own target_disruption_within_remaining_route column has only 135 positive rows out of 168,877 (0.08%) and ZERO positives in the 2025 chronological test year, so recall could not be evaluated on the held-out set. A composite label was constructed from congestion_level/incident_type/road_status (all present in the traffic dataset, all SAFE per feature_leakage_report.json) evaluated at the FUTURE bin only -- see leakage report note for the strict input/label time separation.",
+  "class_distribution": {
+    "train_positive_rate": 0.17630544304847717,
+    "train_n": 8905,
+    "val_positive_rate": 0.17175273597240448,
+    "val_n": 2556,
+    "test_positive_rate": 0.17281273007392883,
+    "test_n": 1383
+  },
+  "selected_threshold": 0.6100000000000001,
+  "risk_level_thresholds": {
+    "low": 0.33,
+    "medium": 0.66
+  },
+  "convlstm_test_metrics": {
+    "accuracy": 0.6760665220535069,
+    "precision": 0.29942418426103645,
+    "recall": 0.6527196652719666,
+    "f1": 0.4105263157894737,
+    "roc_auc": 0.7412404541065629,
+    "pr_auc": 0.3412765333877316,
+    "brier_score": 0.2319192328872099,
+    "confusion_matrix": [
+      [
+        779,
+        365
+      ],
+      [
+        83,
+        156
+      ]
+    ],
+    "threshold_used": 0.6100000000000001
+  },
+  "baseline_logistic_regression_test_metrics": {
+    "accuracy": 0.631236442516269,
+    "precision": 0.24767225325884543,
+    "recall": 0.5564853556485355,
+    "f1": 0.3427835051546392,
+    "roc_auc": 0.619729642742195,
+    "pr_auc": 0.23923352818314236,
+    "brier_score": 0.23571122137545905,
+    "confusion_matrix": [
+      [
+        740,
+        404
+      ],
+      [
+        106,
+        133
+      ]
+    ],
+    "threshold_used": 0.5
+  },
+  "improvement_over_baseline": {
+    "roc_auc_delta": 0.12151081136436792,
+    "pr_auc_delta": 0.10204300520458925,
+    "recall_delta": 0.09623430962343105
+  },
+  "data_quality_warnings": [
+    "Traffic dataset is SYNTHETIC (data_type=SYNTHETIC_JOURNEY_CORRECTED for all rows); results describe pipeline validity on simulated journeys, not field-validated accuracy.",
+    "Terrain/elevation data not available in current training datasets.",
+    "Flood_Inventory sheet has no usable coordinates (100% missing/invalid); flood signal enters the model only via the traffic dataset's district-level flood_* columns.",
+    "Landslide event dataset covers 2007-2017 only (556 events); landslide_event_density for 2018-2025 bins is decayed/extrapolated from that historical record, not fresh events.",
+    "Temporal coverage is episodic, not continuous (25,713 of ~87,600 possible hours in 2016-2025 have any observation); sequences are built over populated hours only, so the 'prediction horizon' is 3 populated-hour-bins ahead, not a fixed 30 minutes.",
+    "This is not claimed to be 100% accurate; see confusion matrix and PR-AUC for the actual, unembellished performance on the 2025 held-out year."
+  ]
+}

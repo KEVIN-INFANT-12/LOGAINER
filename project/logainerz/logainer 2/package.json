@@ -1,0 +1,12 @@
+{
+  "name": "logainer-workspace",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix logainer run dev",
+    "build": "npm --prefix logainer run build",
+    "preview": "npm --prefix logainer run preview",
+    "lint": "npm --prefix logainer run lint",
+    "server": "npm --prefix logainer run server"
+  }
+}

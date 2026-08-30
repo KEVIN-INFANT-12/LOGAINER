@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SmartLog &mdash; Smart Logistics &amp; Disaster Response</title>
+<meta name="description" content="Smart Logistics. Safer Journeys. SmartLog Platform for Drivers and Field Officers">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --navy:#0F1B2D;--navy-med:#1E3A5F;
+  --accent:#2563EB;--accent-l:#3B82F6;--accent-s:#EFF6FF;
+  --teal:#0891B2;--teal-l:#06B6D4;--teal-s:#ECFEFF;
+  --green:#16A34A;--green-l:#22C55E;--green-s:#F0FDF4;
+  --amber:#D97706;--amber-s:#FFFBEB;
+  --red:#DC2626;--red-s:#FEF2F2;
+  --orange:#EA580C;--orange-s:#FFF7ED;
+  --bg:#F8FAFC;--surface:#fff;--surface2:#F1F5F9;
+  --txt:#1E293B;--txt2:#64748B;--txt3:#94A3B8;
+  --border:#E2E8F0;--border2:#F1F5F9;
+  --sh1:0 1px 3px rgba(0,0,0,.08);
+  --sh2:0 4px 12px rgba(0,0,0,.08);
+  --sh3:0 10px 30px rgba(0,0,0,.10);
+  --sh4:0 20px 50px rgba(0,0,0,.15);
+  --r1:8px;--r2:12px;--r3:16px;--r4:20px;--r5:24px;--rf:9999px;
+  --f:'Inter',-apple-system,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:var(--f);background:#111827;overflow:hidden}
+button{border:none;background:none;cursor:pointer;font-family:var(--f)}
+input,textarea,select{font-family:var(--f);outline:none}
+.dw{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px;background:linear-gradient(135deg,#0A1628,#1A2540 60%,#0D1F3C)}
+.phone{position:relative;width:390px;height:844px;background:#000;border-radius:50px;box-shadow:0 0 0 2px #3A4050,0 0 0 6px #1A2030,0 40px 80px rgba(0,0,0,.6);overflow:hidden;flex-shrink:0}
+.notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#000;border-radius:20px;z-index:1000}
+.app{position:relative;width:100%;height:100%;background:var(--bg);overflow:hidden}
+.s{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateX(16px);transition:opacity .25s ease,transform .25s ease;overflow:hidden}
+.s.active{opacity:1;pointer-events:all;transform:none}
+.s.exit{opacity:0;transform:translateX(-16px)}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.sb{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:12px;font-weight:600;flex-shrink:0}
+.sb.dk{background:var(--navy);color:#fff}.sb.lt{background:var(--surface);color:var(--txt)}
+.sb.tp{background:transparent;position:absolute;top:0;left:0;right:0;z-index:10;color:#fff}
+.h1{font-size:26px;font-weight:800;line-height:1.2;letter-spacing:-.3px}
+.h2{font-size:22px;font-weight:700;line-height:1.3}
+.h3{font-size:18px;font-weight:700;line-height:1.4}
+.h4{font-size:16px;font-weight:600;line-height:1.4}
+.body{font-size:15px;font-weight:400;line-height:1.5}
+.sm{font-size:13px;font-weight:400;line-height:1.4}
+.sm-m{font-size:13px;font-weight:500;line-height:1.4}
+.cap{font-size:11px;font-weight:500;line-height:1.3;letter-spacing:.3px}
+.label{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.c1{color:var(--txt)}.c2{color:var(--txt2)}.c3{color:var(--txt3)}.cw{color:#fff}
+.ca{color:var(--accent)}.ct{color:var(--teal)}.cg{color:var(--green)}.cam{color:var(--amber)}.cr{color:var(--red)}
+.row{display:flex;align-items:center}.col{display:flex;flex-direction:column}
+.between{justify-content:space-between}.gap2{gap:8px}.gap3{gap:12px}.gap4{gap:16px}
+.mb2{margin-bottom:8px}.mb3{margin-bottom:12px}.mb4{margin-bottom:16px}.mb5{margin-bottom:20px}
+.mt2{margin-top:8px}.mt3{margin-top:12px}.mt4{margin-top:16px}
+.tc{text-align:center}.w100{width:100%}.f1{flex:1}.sh0{flex-shrink:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:var(--rf);font-size:15px;font-weight:600;transition:all .18s;cursor:pointer;user-select:none}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--accent);color:#fff;box-shadow:0 4px 16px rgba(37,99,235,.35)}
+.btn-teal{background:var(--teal);color:#fff;box-shadow:0 4px 16px rgba(8,145,178,.35)}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 4px 16px rgba(22,163,74,.35)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 4px 16px rgba(220,38,38,.4)}
+.btn-out{background:transparent;color:var(--txt);border:1.5px solid var(--border)}
+.btn-ghost{background:transparent;color:var(--accent)}
+.btn-full{width:100%}.btn-sm{padding:10px 16px;font-size:13px}.btn-lg{padding:16px 32px;font-size:16px}
+.inp-grp{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.inp-lbl{font-size:13px;font-weight:600;color:var(--txt2)}
+.inp-wrap{position:relative}
+.inp-wrap input,.inp-wrap select,.inp-wrap textarea{width:100%;padding:13px 16px 13px 44px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);font-size:15px;color:var(--txt);transition:border-color .18s}
+.inp-wrap input:focus,.inp-wrap select:focus,.inp-wrap textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.inp-wrap input::placeholder{color:var(--txt3)}
+.inp-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none}
+.card{background:var(--surface);border-radius:var(--r3);box-shadow:var(--sh1);overflow:hidden}
+.cp{padding:20px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--rf);font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.b-green{background:var(--green-s);color:var(--green)}.b-amber{background:var(--amber-s);color:var(--amber)}
+.b-red{background:var(--red-s);color:var(--red)}.b-accent{background:var(--accent-s);color:var(--accent)}
+.b-orange{background:var(--orange-s);color:var(--orange)}.b-teal{background:var(--teal-s);color:var(--teal)}
+.b-gray{background:var(--surface2);color:var(--txt2)}
+.bnav{display:flex;align-items:center;justify-content:space-around;height:80px;padding:0 8px 16px;background:var(--surface);border-top:1px solid var(--border2);box-shadow:0 -4px 20px rgba(0,0,0,.06);flex-shrink:0}
+.ni{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border-radius:var(--r2);cursor:pointer;transition:all .18s;flex:1}
+.ni:active{transform:scale(.92)}
+.ni svg{width:22px;height:22px;color:var(--txt3);transition:color .18s}
+.ni span{font-size:10px;font-weight:600;color:var(--txt3);transition:color .18s}
+.ni.act{background:var(--accent-s)}.ni.act svg,.ni.act span{color:var(--accent)}
+.ni.act-t{background:var(--teal-s)}.ni.act-t svg,.ni.act-t span{color:var(--teal)}
+.ah{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border2);flex-shrink:0}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0}
+.ico-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--txt2);transition:all .18s;cursor:pointer}
+.ico-btn:active{transform:scale(.9)}
+.sh{display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border2);flex-shrink:0}
+.sh-title{flex:1;font-size:17px;font-weight:700;color:var(--txt)}
+.back-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--txt);cursor:pointer;transition:all .18s;flex-shrink:0}
+.back-btn:active{transform:scale(.9)}
+.sdot{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-g{background:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.2)}
+.dot-r{background:var(--red)}.dot-gr{background:var(--txt3)}
+.pbar{height:6px;background:var(--border);border-radius:var(--rf);overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--teal));border-radius:var(--rf);transition:width .5s}
+.tgl{width:48px;height:26px;background:var(--txt3);border-radius:var(--rf);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.tgl.on{background:var(--green)}
+.tgl::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s}
+.tgl.on::after{transform:translateX(22px)}
+.map-c{position:relative;background:#E8EEF4;overflow:hidden}
+.map-c svg.msv{position:absolute;inset:0;width:100%;height:100%}
+.gps-wrap{position:absolute;transform:translate(-50%,-50%)}
+.gps-dot{width:14px;height:14px;background:var(--accent);border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(37,99,235,.5);position:relative;z-index:2}
+.gps-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;background:rgba(37,99,235,.12);animation:gpsPulse 2s ease-out infinite}
+.gps-ring.r2{animation-delay:.7s}
+.map-fab{position:absolute;width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:var(--sh2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent);transition:all .18s}
+.map-fab:active{transform:scale(.92)}
+.mkr{position:absolute;transform:translate(-50%,-50%);cursor:pointer}
+.mkr-pin{border-radius:50%;display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.efab{position:absolute;bottom:100px;right:20px;width:60px;height:60px;background:var(--red);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(220,38,38,.45);cursor:pointer;z-index:100;transition:all .18s}
+.efab:active{transform:scale(.92)}
+.efab-lbl{font-size:8px;font-weight:800;color:#fff;letter-spacing:.5px;text-transform:uppercase}
+@keyframes gpsPulse{0%{width:20px;height:20px;opacity:.8}100%{width:60px;height:60px;opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes bounceIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes voiceWave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(.5);opacity:.8}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
+.irow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2)}
+.irow:last-child{border-bottom:none}
+.iico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--bg);flex-shrink:0}
+.stitle{font-size:12px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.npad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 24px}
+.nkey{aspect-ratio:1;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:var(--txt);box-shadow:var(--sh1);cursor:pointer;transition:all .18s}
+.nkey:active{background:var(--accent);color:#fff;transform:scale(.92)}
+.vbar{width:4px;border-radius:4px;background:#fff;animation:voiceWave .8s ease-in-out infinite}
+.vorb{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;position:relative;margin:0 auto;box-shadow:0 0 40px rgba(37,99,235,.4);animation:gpsPulse 2s ease infinite}
+.vwaves{display:flex;align-items:center;gap:4px}
+.lang-it{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border2);cursor:pointer}
+.lang-it:hover{background:var(--bg)}
+.lang-ck{width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.prof-hdr{background:linear-gradient(160deg,var(--navy),var(--navy-med));padding:28px 20px 24px;flex-shrink:0;position:relative;overflow:hidden}
+.prof-hdr::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(255,255,255,.03);border-radius:50%}
+.prof-big-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:24px;border:3px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.pstat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.05);border-radius:var(--r3);overflow:hidden;margin-top:16px}
+.pstat-item{background:rgba(255,255,255,.04);padding:14px 6px;text-align:center}
+.ph-circle{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;color:#fff;font-size:34px;font-weight:700;position:relative;box-shadow:0 8px 24px rgba(37,99,235,.3);margin:0 auto}
+.ph-edit{position:absolute;bottom:2px;right:2px;width:28px;height:28px;background:var(--accent);border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ph-acts{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.ph-act{padding:7px 13px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rf);font-size:12px;font-weight:600;color:var(--txt2);cursor:pointer}
+.vc-card{background:linear-gradient(135deg,var(--navy),var(--navy-med));border-radius:var(--r4);padding:22px;color:#fff;margin:16px 0;position:relative;overflow:hidden}
+.vc-card::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%}
+.lp-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+.lp-illus{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:28px;position:relative}
+.lp-ring{position:absolute;border-radius:50%;border:2px solid rgba(37,99,235,.15);animation:ringPulse 2.5s ease-out infinite}
+.lp-feat{width:100%;margin:20px 0}
+.lp-fi{display:flex;align-items:center;gap:12px;padding:9px 0;text-align:left}
+.lp-ficon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--accent-s);color:var(--accent)}
+.pin-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:200px;margin:20px auto}
+.pdot{width:16px;height:16px;border-radius:50%;background:var(--border);transition:all .18s;margin:auto}
+.pdot.fill{background:var(--accent)}
+.bio-btn{width:70px;height:70px;border-radius:50%;background:var(--accent-s);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;margin:16px auto 0;transition:all .18s}
+.bio-btn:active{transform:scale(.92)}
+.sticky-cta{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;background:#fff;border-top:1px solid var(--border2);box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.nf-item{display:flex;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .18s}
+.nf-item:hover{background:var(--bg)}
+.nf-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.info-ban{display:flex;align-items:center;gap:12px;border-radius:var(--r3);padding:14px 16px;cursor:pointer}
+.chk{width:18px;height:18px;border:2px solid var(--border);border-radius:5px;background:var(--surface);display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
+.chk.on{background:var(--accent);border-color:var(--accent)}
+.tc-card{background:var(--surface);border-radius:var(--r3);overflow:hidden;box-shadow:var(--sh1);border:1px solid var(--border2);margin-bottom:14px;cursor:pointer}
+.tc-hdr{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2)}
+.tc-route{padding:14px 16px}
+.tc-ri{display:flex;align-items:center;gap:12px;padding:6px 0;position:relative}
+.rdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.rconn{position:absolute;left:4px;top:22px;width:2px;height:14px;background:var(--border)}
+.tc-stats{display:flex;gap:12px;padding:10px 16px;background:var(--bg);border-top:1px solid var(--border2)}
+.tc-stat{flex:1;display:flex;align-items:center;gap:6px}
+.tc-acts{padding:12px 16px;display:flex;gap:10px;border-top:1px solid var(--border2)}
+.nav-panel{background:#fff;border-radius:24px 24px 0 0;flex-shrink:0;box-shadow:0 -4px 30px rgba(0,0,0,.15)}
+.turn-ico{width:48px;height:48px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nstat{flex:1;text-align:center;padding:0 8px}
+.nstat:not(:last-child){border-right:1px solid var(--border2)}
+.tl-item{display:flex;gap:16px;position:relative;padding-bottom:24px}
+.tl-conn{position:absolute;left:19px;top:40px;width:2px;height:calc(100% - 8px);background:var(--border)}
+.tl-conn.done{background:var(--green)}
+.tl-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--border);background:#fff;z-index:1}
+.tl-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.tl-dot.curr{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.15)}
+.fo-qa{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.fo-qcard{background:var(--surface);border-radius:var(--r3);padding:18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;box-shadow:var(--sh1);transition:all .18s;border:1.5px solid var(--border2)}
+.fo-qcard:hover{box-shadow:var(--sh2);transform:translateY(-1px)}
+.fo-qcard:active{transform:scale(.97)}
+.fo-qico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.upzone{border:2px dashed var(--border);border-radius:var(--r4);padding:28px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;cursor:pointer;transition:all .18s;background:var(--bg)}
+.upzone:hover{border-color:var(--accent);background:var(--accent-s)}
+.up-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.up-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--txt2)}
+.up-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.ev-thumb{aspect-ratio:1;background:var(--surface2);border-radius:var(--r2);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:26px}
+.it-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.it-btn{border:1.5px solid var(--border);border-radius:var(--r2);padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .18s;background:var(--surface)}
+.it-btn:active{transform:scale(.97)}.it-btn.sel{border-color:var(--accent);background:var(--accent-s)}
+.et-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.et-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r3);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .18s;text-align:center}
+.et-btn:hover{border-color:var(--red);background:var(--red-s)}.et-btn:active{transform:scale(.95)}.et-btn.sel{border-color:var(--red);background:var(--red-s)}
+.sev-opts{display:flex;gap:8px}
+.sev-btn{flex:1;padding:10px 6px;border-radius:var(--r2);border:1.5px solid var(--border);text-align:center;cursor:pointer;font-size:12px;font-weight:600}
+.sev-btn.low.sel{background:var(--green-s);border-color:var(--green);color:var(--green)}
+.sev-btn.med.sel{background:var(--amber-s);border-color:var(--amber);color:var(--amber)}
+.sev-btn.hi.sel{background:var(--orange-s);border-color:var(--orange);color:var(--orange)}
+.sev-btn.crit.sel{background:var(--red-s);border-color:var(--red);color:var(--red)}
+
+</style>
+</head>
+<body>
+<div class="dw">
+<div class="phone">
+<div class="notch"></div>
+<div class="app">
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+<symbol id="i-trips" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2" stroke-linecap="round"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/></symbol>
+<symbol id="i-rpts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 10h8M8 14h5" stroke-linecap="round"/></symbol>
+<symbol id="i-back" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4L7 9l5 5"/></symbol>
+<symbol id="i-chev" viewBox="0 0 16 16" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></symbol>
+<symbol id="i-warn" viewBox="0 0 22 22" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linejoin="round"><path d="M11 2L1.5 19h19L11 2z"/><path d="M11 9v5" stroke-linecap="round"/><circle cx="11" cy="16.5" r="1" fill="#D97706" stroke="none"/></symbol>
+<symbol id="i-loc" viewBox="0 0 18 18" fill="none"><path d="M9 2C5.7 2 3 4.7 3 8c0 4.5 6 10 6 10s6-5.5 6-10c0-3.3-2.7-6-6-6z" stroke="#2563EB" stroke-width="1.5"/><circle cx="9" cy="8" r="2" fill="#2563EB"/></symbol>
+<symbol id="i-globe" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="7"/><path d="M2 9h14M9 2C7 4.5 6 6.8 6 9s1 4.5 3 7M9 2c2 2.5 3 4.8 3 7s-1 4.5-3 7"/></symbol>
+<symbol id="i-mic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 1a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V4a3 3 0 0 1 3-3z"/><path d="M5 9a5 5 0 0 0 10 0M10 14v4"/></symbol>
+<symbol id="i-lock" viewBox="0 0 38 38" fill="none"><path d="M10 18V13a9 9 0 0 1 18 0v5" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round"/><rect x="4" y="18" width="30" height="18" rx="4" stroke="#2563EB" stroke-width="2.5" fill="rgba(37,99,235,.08)"/><circle cx="19" cy="27" r="3" fill="#2563EB"/><path d="M19 27v4" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-chk" viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="24" stroke="#16A34A" stroke-width="2.5"/><path d="M15 26l8 8 14-16" stroke="#16A34A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-sos" viewBox="0 0 22 22" fill="none"><path d="M11 2L1.5 19h19L11 2z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M11 9v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="16.5" r="1.2" fill="#fff"/></symbol>
+<symbol id="i-truck" viewBox="0 0 34 24" fill="none"><rect x="0" y="10" width="28" height="12" rx="2" stroke="#2563EB" stroke-width="2"/><path d="M2 10L7 3h16l5 7" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><circle cx="7" cy="22" r="2.5" fill="#2563EB"/><circle cx="23" cy="22" r="2.5" fill="#2563EB"/></symbol>
+<symbol id="i-officer" viewBox="0 0 34 34" fill="none"><circle cx="17" cy="10" r="5" stroke="#0891B2" stroke-width="2"/><path d="M5 28c0-5.5 5.4-10 12-10s12 4.5 12 10" stroke="#0891B2" stroke-width="2" stroke-linecap="round"/><circle cx="26" cy="8" r="5" fill="#ECFEFF"/><path d="M24 8l1.5 1.5L28 6.5" stroke="#0891B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-finger" viewBox="0 0 36 36" fill="none"><path d="M18 4C11.4 4 6 9.4 6 16" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><path d="M18 4c6.6 0 12 5.4 12 12" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><path d="M10 20c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><path d="M14 22c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><path d="M18 26v4" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="28" r="1.5" fill="#2563EB"/></symbol>
+</defs>
+</svg>
+<div class="s active" id="splash" style="background:linear-gradient(160deg,#08111F,#0F1B2D 45%,#1A2F50 100%)">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px">
+  <div style="width:96px;height:96px;background:linear-gradient(135deg,rgba(37,99,235,.9),rgba(8,145,178,.9));border-radius:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 60px rgba(37,99,235,.4);animation:bounceIn .8s ease both">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <path d="M8 36L20 12 30 22 40 6 46 14" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="8" cy="36" r="5" fill="#fff"/>
+      <circle cx="46" cy="14" r="4" fill="rgba(255,255,255,.5)"/>
+      <path d="M28 36l-2 10h6l-2-10" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="28" cy="36" r="3.5" fill="#06B6D4"/>
+    </svg>
+  </div>
+  <div style="text-align:center;animation:fadeUp .8s ease .3s both">
+    <div style="font-size:34px;font-weight:900;color:#fff;letter-spacing:-1px">Smart<span style="color:#06B6D4">Log</span></div>
+    <div style="font-size:15px;color:rgba(255,255,255,.5);margin-top:8px">Smart Logistics. Safer Journeys.</div>
+    <div style="display:flex;gap:6px;justify-content:center;margin-top:20px">
+      <div class="ldot"></div><div class="ldot" style="animation-delay:.2s"></div><div class="ldot" style="animation-delay:.4s"></div>
+    </div>
+  </div>
+</div>
+<div style="padding:24px;text-align:center">
+  <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.18);letter-spacing:1.5px">SMART LOGISTICS PLATFORM v2.4</div>
+</div>
+</div>
+<div class="s" id="role-select">
+<div class="sb dk"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div style="background:var(--navy);padding:32px 24px 28px;text-align:center;flex-shrink:0">
+  <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:16px">
+    <div style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:10px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 52 52" fill="none"><path d="M8 36L20 12 30 22 40 6 46 14" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="36" r="5" fill="#fff"/></svg>
+    </div>
+    <span style="font-size:18px;font-weight:800;color:#fff;letter-spacing:-.3px">SmartLog</span>
+  </div>
+  <div class="h2 cw tc mb3">Welcome to SmartLog</div>
+  <div class="sm tc" style="color:rgba(255,255,255,.6)">Choose how you are accessing the platform.</div>
+</div>
+<div class="scroll" style="padding:24px">
+  <div class="role-card" onclick="go('driver-login')">
+    <div class="rico" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">
+      <svg width="34" height="24" viewBox="0 0 34 24"><use href="#i-truck"/></svg>
+    </div>
+    <div style="flex:1"><div class="h4 c1 mb2">Driver</div><div class="sm c2">Manage trips, navigate routes and stay informed about road conditions.</div></div>
+    <svg width="18" height="18" viewBox="0 0 16 16"><use href="#i-chev"/></svg>
+  </div>
+  <div class="role-card" onclick="go('fo-login')">
+    <div class="rico" style="background:linear-gradient(135deg,#ECFEFF,#CFFAFE)">
+      <svg width="34" height="34" viewBox="0 0 34 34"><use href="#i-officer"/></svg>
+    </div>
+    <div style="flex:1"><div class="h4 c1 mb2">Field Officer</div><div class="sm c2">Monitor disaster situations, submit reports and keep teams informed.</div></div>
+    <svg width="18" height="18" viewBox="0 0 16 16"><use href="#i-chev"/></svg>
+  </div>
+  <div style="padding:14px 16px;background:linear-gradient(135deg,#EFF6FF,#ECFEFF);border-radius:var(--r3);border:1px solid rgba(37,99,235,.1)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><svg width="15" height="15" viewBox="0 0 22 22"><use href="#i-warn"/></svg><span class="sm-m ca">Platform Notice</span></div>
+    <div class="sm c2">Reserved for authorized personnel only. All access is monitored and logged.</div>
+  </div>
+</div>
+</div>
+<div class="s" id="driver-login">
+<div class="sb dk"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="lhdr" style="background:var(--navy)">
+  <button class="back-btn mb3" onclick="go('role-select')" style="background:rgba(255,255,255,.1);color:#fff"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+    <div style="width:36px;height:36px;background:rgba(37,99,235,.2);border-radius:10px;display:flex;align-items:center;justify-content:center"><svg width="22" height="16" viewBox="0 0 34 24"><use href="#i-truck"/></svg></div>
+    <span class="label" style="color:rgba(255,255,255,.5)">Driver Access</span>
+  </div>
+  <div class="h1 cw">Sign In</div>
+  <div class="sm mt2" style="color:rgba(255,255,255,.6)">Welcome back. Enter your credentials to continue.</div>
+</div>
+<div class="lbody">
+  <div class="inp-grp">
+    <div class="inp-lbl">Mobile Number / Email</div>
+    <div class="inp-wrap"><span class="inp-ico"><svg width="16" height="16" viewBox="0 0 18 18"><use href="#i-loc"/></svg></span><input type="text" value="+91 98765 43210"></div>
+  </div>
+  <div class="inp-grp">
+    <div class="inp-lbl">Password</div>
+    <div class="inp-wrap"><span class="inp-ico">🔒</span><input type="password" value="••••••••"></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;margin-top:8px">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <div class="chk on"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="sm c2">Remember me</span>
+    </label>
+    <button class="btn-ghost" style="font-size:13px;font-weight:600">Forgot Password?</button>
+  </div>
+  <button class="btn btn-p btn-full btn-lg mb3" onclick="go('location-perm')">Sign In</button>
+  <div style="position:relative;display:flex;align-items:center;gap:12px;margin:16px 0"><div style="flex:1;height:1px;background:var(--border)"></div><span class="sm c3">or sign in with</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <button class="btn btn-out btn-sm" style="gap:8px;font-size:13px">
+      <svg width="16" height="16" viewBox="0 0 18 18"><path d="M16.5 9.2c0-.6-.1-1.1-.2-1.6H9v3h4.2c-.2.9-.7 1.7-1.5 2.2v1.8h2.4c1.4-1.3 2.4-3.2 2.4-5.4z" fill="#4285F4"/><path d="M9 17c2.2 0 4-.7 5.3-2l-2.4-1.8c-.7.5-1.6.8-2.9.8-2.2 0-4.1-1.5-4.8-3.5H1.8V12c1.3 2.6 4 4.5 7.2 4.5z" fill="#34A853"/><path d="M4.2 10.5c-.2-.5-.3-1-.3-1.5s.1-1 .3-1.5V5.7H1.8C1.3 6.8 1 7.9 1 9s.3 2.2.8 3.3l2.4-1.8z" fill="#FBBC05"/><path d="M9 3.5c1.2 0 2.3.4 3.2 1.2l2.4-2.4C13 .9 11.2 0 9 0 5.8 0 3.1 1.9 1.8 5l2.4 1.8C4.9 4.8 6.8 3.5 9 3.5z" fill="#EA4335"/></svg>
+      Google
+    </button>
+    <button class="btn btn-out btn-sm" style="font-size:13px">🪪 Employee ID</button>
+  </div>
+</div>
+</div>
+<div class="s" id="fo-login">
+<div class="sb dk" style="background:#0A2A35"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="lhdr" style="background:linear-gradient(160deg,#0A2A35,#0D3545)">
+  <button class="back-btn mb3" onclick="go('role-select')" style="background:rgba(255,255,255,.1);color:#fff"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+    <div style="width:36px;height:36px;background:rgba(8,145,178,.25);border-radius:10px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 34 34"><use href="#i-officer"/></svg></div>
+    <span class="label" style="color:rgba(255,255,255,.5)">Field Officer Access</span>
+  </div>
+  <div class="h1 cw">Secure Sign In</div>
+  <div class="sm mt2" style="color:rgba(255,255,255,.6)">Authorized field personnel only. All access is monitored.</div>
+</div>
+<div class="lbody">
+  <div class="inp-grp">
+    <div class="inp-lbl">Employee ID / Email</div>
+    <div class="inp-wrap"><span class="inp-ico">🪪</span><input type="text" value="FO-2024-83741"></div>
+  </div>
+  <div class="inp-grp">
+    <div class="inp-lbl">Password</div>
+    <div class="inp-wrap"><span class="inp-ico">🔒</span><input type="password" value="••••••••"></div>
+  </div>
+  <div style="background:var(--amber-s);border:1px solid rgba(217,119,6,.2);border-radius:var(--r2);padding:12px;display:flex;gap:10px;margin-bottom:20px">
+    <svg width="18" height="18" viewBox="0 0 22 22" style="flex-shrink:0;margin-top:1px"><use href="#i-warn"/></svg>
+    <span class="sm" style="color:var(--amber)">After login, identity verification is required via PIN or biometrics.</span>
+  </div>
+  <button class="btn btn-teal btn-full btn-lg" onclick="go('fo-security')">Sign In Securely</button>
+</div>
+</div>
+<div class="s" id="fo-security">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh" style="border-bottom:none;background:var(--bg)"><button class="back-btn" onclick="go('fo-login')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button></div>
+<div class="scroll" style="padding:0 24px 32px;display:flex;flex-direction:column;align-items:center">
+  <div style="width:80px;height:80px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 8px 24px rgba(37,99,235,.15)">
+    <svg width="40" height="40" viewBox="0 0 38 38"><use href="#i-lock"/></svg>
+  </div>
+  <div class="h2 c1 tc mb3">Secure Access</div>
+  <div class="sm c2 tc mb4">Verify your identity to access field operations.</div>
+  <div class="pin-row"><div class="pdot fill"></div><div class="pdot fill"></div><div class="pdot fill"></div><div class="pdot"></div></div>
+  <div class="npad" style="width:100%;max-width:290px;margin-bottom:20px">
+    <div class="nkey">1</div><div class="nkey">2<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">ABC</div></div><div class="nkey">3<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">DEF</div></div>
+    <div class="nkey">4<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">GHI</div></div><div class="nkey">5<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">JKL</div></div><div class="nkey">6<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">MNO</div></div>
+    <div class="nkey">7<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">PQRS</div></div><div class="nkey">8<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">TUV</div></div><div class="nkey">9<div style="font-size:8px;color:var(--txt3);letter-spacing:1px">WXYZ</div></div>
+    <div class="nkey" onclick="go('loc-perm-fo')" style="font-size:14px;color:var(--teal)">🌐</div>
+    <div class="nkey" onclick="go('loc-perm-fo')">0</div>
+    <div class="nkey">⌫</div>
+  </div>
+  <div class="sm-m c2 tc mb3">or use biometrics</div>
+  <div class="bio-btn" onclick="go('loc-perm-fo')"><svg width="36" height="36" viewBox="0 0 36 36"><use href="#i-finger"/></svg></div>
+  <div class="cap c3 tc mt3">Touch fingerprint sensor</div>
+</div>
+</div>
+<div class="s" id="location-perm">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="lp-body">
+  <div class="lp-illus" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">
+    <div class="lp-ring" style="width:160px;height:160px"></div>
+    <div class="lp-ring" style="width:190px;height:190px;animation-delay:.9s"></div>
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M32 8C22.6 8 15 15.6 15 25c0 13.5 17 31 17 31s17-17.5 17-31C49 15.6 41.4 8 32 8z" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><circle cx="32" cy="25" r="7" fill="#2563EB" opacity=".9"/><circle cx="32" cy="25" r="3" fill="#fff"/></svg>
+  </div>
+  <div class="h2 c1 tc mb3">Enable Location Access</div>
+  <div class="body c2 tc mb4">Location access provides live tracking, navigation, route updates and safety alerts.</div>
+  <div class="lp-feat">
+    <div class="lp-fi"><div class="lp-ficon"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div><div><div class="sm-m c1">Live Location Sharing</div><div class="cap c2">Real-time position shared with logistics network</div></div></div>
+    <div class="lp-fi"><div class="lp-ficon" style="background:var(--green-s);color:var(--green)">🧭</div><div><div class="sm-m c1">Turn-by-Turn Navigation</div><div class="cap c2">Precise route guidance to your destination</div></div></div>
+    <div class="lp-fi"><div class="lp-ficon" style="background:var(--red-s);color:var(--red)"><svg width="18" height="18" viewBox="0 0 22 22"><use href="#i-warn"/></svg></div><div><div class="sm-m c1">Emergency & Disaster Alerts</div><div class="cap c2">Location-based safety warnings on your route</div></div></div>
+    <div class="lp-fi"><div class="lp-ficon" style="background:var(--teal-s);color:var(--teal)">📡</div><div><div class="sm-m c1">Route Monitoring</div><div class="cap c2">Live traffic and road condition updates</div></div></div>
+  </div>
+  <div class="w100">
+    <button class="btn btn-p btn-full btn-lg mb3" onclick="go('driver-profile-setup')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg> Allow Current Location</button>
+    <button class="btn btn-ghost btn-full" onclick="go('driver-profile-setup')">Not Now</button>
+  </div>
+</div>
+</div>
+<div class="s" id="loc-perm-fo">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="lp-body">
+  <div class="lp-illus" style="background:linear-gradient(135deg,#ECFEFF,#CFFAFE)">
+    <div class="lp-ring" style="width:160px;height:160px;border-color:rgba(8,145,178,.15)"></div>
+    <div class="lp-ring" style="width:190px;height:190px;animation-delay:.9s;border-color:rgba(8,145,178,.1)"></div>
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M32 8C22.6 8 15 15.6 15 25c0 13.5 17 31 17 31s17-17.5 17-31C49 15.6 41.4 8 32 8z" fill="#CFFAFE" stroke="#0891B2" stroke-width="2"/><circle cx="32" cy="25" r="7" fill="#0891B2" opacity=".9"/><circle cx="32" cy="25" r="3" fill="#fff"/></svg>
+  </div>
+  <div class="h2 c1 tc mb3">Enable Location Access</div>
+  <div class="body c2 tc mb4">Location enables field tracking, incident verification and emergency coordination.</div>
+  <div class="lp-feat">
+    <div class="lp-fi"><div class="lp-ficon" style="background:var(--teal-s);color:var(--teal)"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div><div><div class="sm-m c1">Field Tracking</div><div class="cap c2">Real-time officer position for HQ coordination</div></div></div>
+    <div class="lp-fi"><div class="lp-ficon" style="background:var(--red-s);color:var(--red)"><svg width="18" height="18" viewBox="0 0 22 22"><use href="#i-warn"/></svg></div><div><div class="sm-m c1">Disaster Reporting</div><div class="cap c2">Auto-attach GPS location to incident reports</div></div></div>
+    <div class="lp-fi"><div class="lp-ficon" style="background:var(--green-s);color:var(--green)">✅</div><div><div class="sm-m c1">Emergency Response</div><div class="cap c2">Auto-locate during emergency alerts</div></div></div>
+  </div>
+  <div class="w100">
+    <button class="btn btn-teal btn-full btn-lg mb3" onclick="go('fo-profile-setup')">Allow Current Location</button>
+    <button class="btn btn-ghost btn-full" onclick="go('fo-profile-setup')">Not Now</button>
+  </div>
+</div>
+</div>
+<div class="s" id="driver-profile-setup">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh">
+  <div style="flex:1"><div class="h4 c1">Complete Your Profile</div><div class="cap c2 mt2">Step 1 of 2 — Personal Information</div></div>
+  <button class="btn-ghost" style="font-size:13px;font-weight:600" onclick="go('driver-home')">Skip</button>
+</div>
+<div style="padding:12px 20px 0;flex-shrink:0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="sm-m c1">Profile 70% Complete</span><span class="sm c3">— add more info</span></div>
+  <div class="pbar mb4"><div class="pfill" style="width:70%"></div></div>
+</div>
+<div class="scroll" style="padding:0 20px 24px">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:16px 0 20px">
+    <div class="ph-circle">RK<div class="ph-edit">✏</div></div>
+    <div class="ph-acts"><button class="ph-act">📷 Take Photo</button><button class="ph-act">🖼 Upload</button><button class="ph-act" style="color:var(--red);border-color:rgba(220,38,38,.2)">Remove</button></div>
+  </div>
+  <div class="card cp mb4">
+    <div class="stitle">Personal Information</div>
+    <div class="inp-grp"><div class="inp-lbl">Full Name</div><div class="inp-wrap"><span class="inp-ico">👤</span><input type="text" value="Rajesh Kumar Singh"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Phone Number</div><div class="inp-wrap"><span class="inp-ico">📱</span><input type="tel" value="+91 98765 43210"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Email Address</div><div class="inp-wrap"><span class="inp-ico">✉</span><input type="email" value="rajesh.kumar@smartlog.in"></div></div>
+    <div class="inp-grp" style="margin-bottom:0"><div class="inp-lbl">Emergency Contact</div><div class="inp-wrap"><span class="inp-ico">🆘</span><input type="tel" placeholder="+91 00000 00000"></div></div>
+  </div>
+  <button class="btn btn-p btn-full mb3" onclick="go('driver-vehicle')">Continue to Vehicle Info →</button>
+  <button class="btn btn-ghost btn-full" onclick="go('driver-home')">Save & Complete Later</button>
+</div>
+</div>
+<div class="s" id="driver-vehicle">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('driver-profile-setup')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Vehicle Information</div><span class="cap c3">Step 2 of 2</span></div>
+<div class="scroll" style="padding:16px 20px 24px">
+  <div class="vc-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:4px">VEHICLE</div><div style="font-size:22px;font-weight:800;color:#fff">Tata 407</div></div>
+      <div style="width:48px;height:48px;background:rgba(255,255,255,.08);border-radius:14px;display:flex;align-items:center;justify-content:center">🚚</div>
+    </div>
+    <div style="font-size:16px;font-weight:700;color:rgba(255,255,255,.9);font-family:monospace;letter-spacing:2px;margin-bottom:10px">TN 04 AB 2048</div>
+    <div style="display:flex;gap:18px">
+      <div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:2px">Capacity</div><div style="font-size:13px;font-weight:600;color:#fff">2.5 Tons</div></div>
+      <div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:2px">Fuel</div><div style="font-size:13px;font-weight:600;color:#fff">Diesel</div></div>
+      <div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:2px">Insurance</div><div style="font-size:13px;font-weight:600;color:#22C55E">Valid ✓</div></div>
+    </div>
+  </div>
+  <div class="card cp mb4">
+    <div class="stitle">Vehicle Details</div>
+    <div class="inp-grp"><div class="inp-lbl">Vehicle Type</div><div class="inp-wrap"><span class="inp-ico">🚛</span><input type="text" value="Light Commercial Vehicle (LCV)"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Registration Number</div><div class="inp-wrap"><span class="inp-ico">🔢</span><input type="text" value="TN 04 AB 2048"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Vehicle Model</div><div class="inp-wrap"><span class="inp-ico">🚐</span><input type="text" value="Tata 407"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="inp-grp" style="margin-bottom:0"><div class="inp-lbl">Capacity (Tons)</div><div class="inp-wrap"><span class="inp-ico">⚖</span><input type="text" value="2.5"></div></div>
+      <div class="inp-grp" style="margin-bottom:0"><div class="inp-lbl">Fuel Type</div><div class="inp-wrap"><span class="inp-ico">⛽</span><input type="text" value="Diesel"></div></div>
+    </div>
+  </div>
+  <button class="btn btn-p btn-full btn-lg" onclick="go('driver-home')">Save & Continue →</button>
+</div>
+</div>
+<div class="s" id="driver-home">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="ah">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="av">RK</div>
+    <div><div class="sm-m c1">Rajesh Kumar</div><div class="sdot"><div class="dot dot-g"></div><span class="cap cg">Online</span></div></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <div class="ico-btn" onclick="go('driver-multilingual')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-globe"/></svg></div>
+    <div class="ico-btn" style="position:relative" onclick="go('driver-notifications')">
+      <svg width="18" height="18" viewBox="0 0 24 24"><use href="#i-bell"/></svg>
+      <div style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:1.5px solid #fff"></div>
+    </div>
+  </div>
+</div>
+<div class="scroll">
+  <div style="position:relative;height:260px;flex-shrink:0">
+    <div class="map-c" style="height:260px">
+    <svg class="msv" viewBox="0 0 390 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="390" height="260" fill="#E8EEF4"/>
+    <line x1="0" y1="130" x2="390" y2="130" class="r-maj"/>
+    <line x1="195" y1="0" x2="195" y2="260" class="r-maj"/>
+    <line x1="0" y1="65" x2="390" y2="65" class="r-min"/>
+    <line x1="0" y1="195" x2="390" y2="195" class="r-min"/>
+    <line x1="98" y1="0" x2="98" y2="260" class="r-min"/>
+    <line x1="295" y1="0" x2="295" y2="260" class="r-min"/>
+    <path d="M0 260 Q100 170 200 120 Q300 70 390 65" stroke="#C8D5E0" stroke-width="8" fill="none"/>
+    <path d="M50 230 Q180 130 260 90 Q330 50 360 50" class="r-glow"/>
+    <path d="M50 230 Q180 130 260 90 Q330 50 360 50" class="r-route"/>
+    <rect x="110" y="75" width="66" height="32" rx="4" class="bld"/>
+    <rect x="220" y="145" width="56" height="32" rx="4" class="bld"/>
+    <rect x="12" y="140" width="74" height="27" rx="4" class="bld2"/>
+    </svg>
+    <div class="gps-wrap" style="left:50%;top:81%">
+    <div class="gps-ring" style="width:20px;height:20px;background:rgba(37,99,235,.12)"></div>
+    <div class="gps-ring r2" style="width:20px;height:20px;background:rgba(37,99,235,.1)"></div>
+    <div class="gps-dot" style="background:var(--accent)"></div>
+    </div>
+    <div class="mkr" style="left:86%;top:22%"><div class="mkr-pin" style="background:var(--amber);width:30px;height:30px;font-size:14px;animation:blink 3s ease infinite">⚠</div></div>
+    <div class="map-fab" style="bottom:12px;right:12px"><svg width="20" height="20" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div>
+    <div style="position:absolute;top:12px;left:12px;background:#fff;border-radius:var(--rf);padding:6px 14px;box-shadow:var(--sh1);display:flex;align-items:center;gap:6px"><div class="dot dot-g" style="animation:blink 2s ease infinite"></div><span style="font-size:12px;font-weight:600;color:var(--txt)">Live Tracking ON</span></div>
+    </div>
+  </div>
+  <div style="padding:14px 16px 80px">
+    <div style="background:var(--surface);border-radius:var(--r3);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh1);border:1px solid var(--border2);margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;background:var(--green-s);border-radius:10px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div>
+        <div><div class="sm-m c1">Live Location: <span style="color:var(--green)">ON</span></div><div class="cap c2">Sharing with Logistics Network · Updated 8s ago</div></div>
+      </div>
+      <div class="tgl on"></div>
+    </div>
+    <div class="stitle">Current Trip</div>
+    <div style="background:var(--surface);border-radius:var(--r3);padding:24px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;border:2px dashed var(--border);margin-bottom:14px">
+      <div style="width:52px;height:52px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px">🚚</div>
+      <div class="h4 c2">No Active Trip</div>
+      <div class="sm c3">You are not currently on any assignment.</div>
+      <button class="btn btn-p btn-sm" onclick="go('available-trips')">Find Available Trips</button>
+    </div>
+    <div class="stitle">Today's Overview</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+      <div class="card cp tc"><div style="font-size:22px;font-weight:800;color:var(--accent)">4</div><div class="cap c2 mt2">Trips Done</div></div>
+      <div class="card cp tc"><div style="font-size:22px;font-weight:800;color:var(--green)">218</div><div class="cap c2 mt2">km Today</div></div>
+      <div class="card cp tc"><div style="font-size:22px;font-weight:800;color:var(--amber)">1</div><div class="cap c2 mt2">Alert</div></div>
+    </div>
+    <div class="info-ban" style="background:var(--amber-s);border:1px solid rgba(217,119,6,.2)" onclick="go('disaster-map')">
+      <div style="width:40px;height:40px;background:var(--amber);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 22 22"><use href="#i-warn"/></svg></div>
+      <div style="flex:1"><div class="sm-m cam">⚠ Heavy Rain Warning</div><div class="cap c2">NH-40 near Jorabat · 12 km ahead</div></div>
+      <svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg>
+    </div>
+  </div>
+</div>
+<div class="efab" onclick="go('emergency-select')"><svg width="22" height="22" viewBox="0 0 22 22"><use href="#i-sos"/></svg><div class="efab-lbl">SOS</div></div>
+<div class="bnav"><div class="ni act" onclick="go('driver-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni" onclick="go('available-trips')"><svg viewBox="0 0 24 24"><use href="#i-trips"/></svg><span>Trips</span></div><div class="ni" onclick="go('disaster-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('driver-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni" onclick="go('driver-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="available-trips">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="ah">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="back-btn" onclick="go('driver-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button>
+    <div><div class="h4 c1">Available Trips</div><div class="cap c2">6 requests nearby</div></div>
+  </div>
+  <div class="ico-btn">🔽</div>
+</div>
+<div class="scroll" style="padding:16px;padding-bottom:90px">
+  <div class="tc-card" onclick="go('trip-details')">
+    <div class="tc-hdr"><div><div style="font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.5px">TRIP #TR-2048</div><div class="h4 c1 mt2">Electronics — 24 Packages</div></div><span class="badge b-red">URGENT</span></div>
+    <div class="tc-route">
+      <div class="tc-ri"><div class="rdot" style="background:var(--green)"></div><div class="rconn"></div><div><div class="sm-m c1">Guwahati Distribution Center</div><div class="cap c3">Pickup · Gate 3</div></div></div>
+      <div class="tc-ri"><div class="rdot" style="background:var(--red)"></div><div><div class="sm-m c1">Shillong Central Warehouse</div><div class="cap c3">Drop · Dock 7</div></div></div>
+    </div>
+    <div class="tc-stats"><div class="tc-stat">📍 <span class="sm-m c1">142 km</span></div><div class="tc-stat">⏱ <span class="sm-m c1">3h 40m</span></div><div class="tc-stat">⚖ <span class="sm-m c1">2.5 T</span></div></div>
+    <div class="tc-acts"><button class="btn btn-out btn-sm" style="flex:1" onclick="event.stopPropagation();go('trip-details')">View Details</button><button class="btn btn-p btn-sm" style="flex:1" onclick="event.stopPropagation();go('trip-details')">Accept Trip</button></div>
+  </div>
+  <div class="tc-card">
+    <div class="tc-hdr"><div><div style="font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.5px">TRIP #TR-2051</div><div class="h4 c1 mt2">Medical Supplies — 8 Boxes</div></div><span class="badge b-amber">PRIORITY</span></div>
+    <div class="tc-route">
+      <div class="tc-ri"><div class="rdot" style="background:var(--green)"></div><div class="rconn"></div><div><div class="sm-m c1">Dispur Pharma Hub</div><div class="cap c3">Pickup · Section B</div></div></div>
+      <div class="tc-ri"><div class="rdot" style="background:var(--red)"></div><div><div class="sm-m c1">Nongpoh Civil Hospital</div><div class="cap c3">Drop · Emergency Dock</div></div></div>
+    </div>
+    <div class="tc-stats"><div class="tc-stat"><span class="sm-m c1">88 km</span></div><div class="tc-stat"><span class="sm-m c1">2h 15m</span></div><div class="tc-stat"><span class="sm-m c1">0.5 T</span></div></div>
+    <div class="tc-acts"><button class="btn btn-out btn-sm" style="flex:1">View Details</button><button class="btn btn-p btn-sm" style="flex:1" onclick="go('trip-details')">Accept Trip</button></div>
+  </div>
+  <div class="tc-card">
+    <div class="tc-hdr"><div><div style="font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.5px">TRIP #TR-2054</div><div class="h4 c1 mt2">FMCG — 156 Units</div></div><span class="badge b-gray">NORMAL</span></div>
+    <div class="tc-route">
+      <div class="tc-ri"><div class="rdot" style="background:var(--green)"></div><div class="rconn"></div><div><div class="sm-m c1">FMCG Warehouse, Amingaon</div><div class="cap c3">Pickup · Bay 12</div></div></div>
+      <div class="tc-ri"><div class="rdot" style="background:var(--red)"></div><div><div class="sm-m c1">Retail Network, Tura</div><div class="cap c3">Drop</div></div></div>
+    </div>
+    <div class="tc-stats"><div class="tc-stat"><span class="sm-m c1">264 km</span></div><div class="tc-stat"><span class="sm-m c1">5h 30m</span></div><div class="tc-stat"><span class="sm-m c1">2.0 T</span></div></div>
+    <div class="tc-acts"><button class="btn btn-out btn-sm" style="flex:1">View Details</button><button class="btn btn-p btn-sm" style="flex:1">Accept Trip</button></div>
+  </div>
+</div>
+<div class="bnav"><div class="ni" onclick="go('driver-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni act" onclick="go('available-trips')"><svg viewBox="0 0 24 24"><use href="#i-trips"/></svg><span>Trips</span></div><div class="ni" onclick="go('disaster-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('driver-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni" onclick="go('driver-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="trip-details">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('available-trips')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Trip Details</div><span class="badge b-red">URGENT</span></div>
+<div class="scroll" style="padding:16px;padding-bottom:100px">
+  <div style="height:140px;border-radius:var(--r3);overflow:hidden;margin-bottom:14px;position:relative">
+    <div class="map-c" style="height:140px">
+    <svg class="msv" viewBox="0 0 390 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="390" height="140" fill="#E8EEF4"/>
+    <line x1="0" y1="70" x2="390" y2="70" class="r-maj"/>
+    <line x1="195" y1="0" x2="195" y2="140" class="r-maj"/>
+    <line x1="0" y1="35" x2="390" y2="35" class="r-min"/>
+    <line x1="0" y1="105" x2="390" y2="105" class="r-min"/>
+    <line x1="98" y1="0" x2="98" y2="140" class="r-min"/>
+    <line x1="295" y1="0" x2="295" y2="140" class="r-min"/>
+    <path d="M0 140 Q100 110 200 60 Q300 10 390 35" stroke="#C8D5E0" stroke-width="8" fill="none"/>
+    <path d="M50 110 Q180 70 260 30 Q330 -10 360 50" class="r-glow"/>
+    <path d="M50 110 Q180 70 260 30 Q330 -10 360 50" class="r-route"/>
+    <rect x="110" y="45" width="66" height="17" rx="4" class="bld"/>
+    <rect x="220" y="85" width="56" height="17" rx="4" class="bld"/>
+    <rect x="12" y="80" width="74" height="12" rx="4" class="bld2"/>
+    </svg>
+    <div class="mkr" style="left:10%;top:80%;transform:translate(-50%,-50%)"><div class="mkr-pin" style="background:var(--green);width:26px;height:26px;font-size:11px;font-weight:700;color:#fff">P</div></div>
+    <div class="mkr" style="left:91%;top:20%;transform:translate(-50%,-50%)"><div class="mkr-pin" style="background:var(--red);width:26px;height:26px;font-size:11px;font-weight:700;color:#fff">D</div></div>
+    <div style="position:absolute;bottom:8px;right:8px;background:#fff;border-radius:var(--rf);padding:4px 10px;box-shadow:var(--sh1);font-size:11px;font-weight:600;color:var(--txt2)">142 km</div>
+    </div>
+  </div>
+  <div style="background:linear-gradient(135deg,var(--navy),var(--navy-med));border-radius:var(--r3);padding:16px 20px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="label" style="color:rgba(255,255,255,.4)">TRIP ID</span><span class="badge b-red">URGENT</span></div>
+    <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:4px">#TR-2048</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5)">Requested 12 min ago &middot; Expires in 28 min</div>
+  </div>
+  <div class="card cp mb3">
+    <div class="stitle">Cargo Information</div>
+    <div class="irow"><div class="iico">📦</div><div style="flex:1"><div class="cap c3">Product Type</div><div class="sm-m c1">Consumer Electronics</div></div></div>
+    <div class="irow"><div class="iico">⚖</div><div style="flex:1"><div class="cap c3">Quantity</div><div class="sm-m c1">24 Packages · ~2.5 Tons</div></div></div>
+    <div class="irow" style="border-bottom:none"><div class="iico" style="background:var(--amber-s)">⚠</div><div style="flex:1"><div class="cap c3">Special Instructions</div><div class="sm-m c1">Fragile. Handle with care. Keep dry.</div></div></div>
+  </div>
+  <div class="card cp mb3">
+    <div class="stitle">Route Details</div>
+    <div style="display:flex;gap:12px;padding-bottom:16px;position:relative">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div style="width:32px;height:32px;background:var(--green-s);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--green)"><div style="width:10px;height:10px;background:var(--green);border-radius:50%"></div></div>
+        <div style="width:2px;flex:1;background:linear-gradient(to bottom,var(--green),var(--red));margin:4px 0;min-height:40px"></div>
+      </div>
+      <div style="padding-top:4px"><div class="label c3 mb2">PICKUP</div><div class="sm-m c1">Guwahati Distribution Center</div><div class="cap c2">Gate 3, NH-37, Guwahati · Assam 781022</div></div>
+    </div>
+    <div style="display:flex;gap:12px">
+      <div style="width:32px;height:32px;background:var(--red-s);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--red);flex-shrink:0"><div style="width:10px;height:10px;background:var(--red);border-radius:50%"></div></div>
+      <div style="padding-top:4px"><div class="label c3 mb2">DESTINATION</div><div class="sm-m c1">Shillong Central Warehouse</div><div class="cap c2">Dock 7, Police Bazar Road · Meghalaya 793001</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border2)">
+      <div class="tc"><div class="cap c3 mb2">Distance</div><div class="h4 c1">142 km</div></div>
+      <div class="tc" style="border-left:1px solid var(--border2)"><div class="cap c3 mb2">Est. Time</div><div class="h4 c1">3h 40m</div></div>
+    </div>
+  </div>
+  <div class="card cp mb3">
+    <div class="stitle">Road Conditions</div>
+    <div class="irow"><div class="iico" style="background:var(--green-s)">🛣</div><div style="flex:1"><div class="sm-m c1">NH-37 Guwahati–Shillong</div><div class="cap cg">Clear &middot; Good condition</div></div><span class="badge b-green">CLEAR</span></div>
+    <div class="irow" style="border-bottom:none"><div class="iico" style="background:var(--amber-s)">🌧</div><div style="flex:1"><div class="sm-m c1">Jorabat–Nongpoh Section</div><div class="cap cam">Heavy Rain &middot; Drive carefully</div></div><span class="badge b-amber">CAUTION</span></div>
+  </div>
+</div>
+<div class="sticky-cta"><button class="btn btn-green btn-full btn-lg" onclick="go('driver-navigation')">✅ Accept Trip</button></div>
+</div>
+<div class="s" id="driver-navigation" style="background:#1A2535">
+<div class="sb tp"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div style="flex:1;position:relative;overflow:hidden">
+  <div class="map-c" style="height:500px">
+    <svg class="msv" viewBox="0 0 390 500" xmlns="http://www.w3.org/2000/svg">
+    <rect width="390" height="500" fill="#1A2535"/>
+    <line x1="0" y1="250" x2="390" y2="250" class="road-dk-maj"/>
+    <line x1="195" y1="0" x2="195" y2="500" class="road-dk-maj"/>
+    <line x1="0" y1="125" x2="390" y2="125" class="road-dk-min"/>
+    <line x1="0" y1="375" x2="390" y2="375" class="road-dk-min"/>
+    <line x1="98" y1="0" x2="98" y2="500" class="road-dk-min"/>
+    <line x1="295" y1="0" x2="295" y2="500" class="road-dk-min"/>
+    <path d="M0 500 Q100 290 200 240 Q300 190 390 125" stroke="#2A3550" stroke-width="8" fill="none"/>
+    <path d="M50 470 Q180 250 260 210 Q330 170 360 50" class="r-glow"/>
+    <path d="M50 470 Q180 250 260 210 Q330 170 360 50" class="r-route"/>
+    <rect x="110" y="135" width="66" height="62" rx="4" class="bld-dk"/>
+    <rect x="220" y="265" width="56" height="62" rx="4" class="bld-dk"/>
+    <rect x="12" y="260" width="74" height="57" rx="4" class="bld-dk"/>
+    </svg>
+  <div style="position:absolute;left:89%;top:7%;transform:translate(-50%,-50%)"><div class="mkr-pin" style="background:var(--red);width:34px;height:34px;font-size:11px;font-weight:700;color:#fff">D</div></div>
+  <div class="gps-wrap" style="left:50%;top:86%">
+    <div class="gps-ring" style="width:20px;height:20px;background:rgba(37,99,235,.12)"></div>
+    <div class="gps-ring r2" style="width:20px;height:20px;background:rgba(37,99,235,.1)"></div>
+    <div class="gps-dot" style="background:#60A5FA"></div>
+    </div>
+  <div style="position:absolute;bottom:0;left:0;background:rgba(26,37,53,.9);border-radius:0 12px 0 0;padding:12px 16px"><div style="font-size:32px;font-weight:900;color:#fff">68</div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.4)">km/h</div></div>
+  <div style="position:absolute;top:52px;left:50%;transform:translateX(-50%);background:rgba(217,119,6,.95);border-radius:var(--rf);padding:6px 14px;display:flex;align-items:center;gap:6px;white-space:nowrap"><svg width="13" height="13" viewBox="0 0 22 22"><use href="#i-warn"/></svg><span style="font-size:11px;font-weight:700;color:#fff">Rain Warning &middot; 12 km ahead</span></div>
+  <div style="position:absolute;top:52px;right:12px;display:flex;flex-direction:column;gap:8px">
+    <div class="map-fab" onclick="go('voice-nav')"><svg width="20" height="20" viewBox="0 0 20 20"><use href="#i-mic"/></svg></div>
+    <div class="map-fab">⊕</div>
+  </div>
+  <div style="position:absolute;top:52px;left:12px"><div class="map-fab" onclick="go('driver-home')"><svg width="20" height="20" viewBox="0 0 18 18"><use href="#i-back"/></svg></div></div>
+  </div>
+</div>
+<div class="nav-panel">
+  <div style="padding:16px 20px 12px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border2)">
+    <div class="turn-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v7M12 12l-4 4M12 12l4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div style="flex:1"><div class="h3 c1">Turn left in 500 m</div><div class="sm c2">onto Shillong Road (NH-40)</div></div>
+    <div style="text-align:right"><div class="cap c3">NEXT</div><div class="sm-m c1">2.3 km</div></div>
+  </div>
+  <div style="display:flex;padding:14px 20px">
+    <div class="nstat"><div class="h3 c1">98 km</div><div class="cap c3">Remaining</div></div>
+    <div class="nstat"><div class="h3 c1">4:35 PM</div><div class="cap c3">ETA</div></div>
+    <div class="nstat"><div class="h3 c1">2h 18m</div><div class="cap c3">Time Left</div></div>
+  </div>
+  <div style="padding:10px 20px 16px;display:flex;gap:10px">
+    <button class="btn btn-out btn-sm" style="flex:1" onclick="go('driver-trip-status')">Status</button>
+    <button class="btn btn-out btn-sm" style="flex:1" onclick="go('voice-nav')"><svg width="14" height="14" viewBox="0 0 20 20"><use href="#i-mic"/></svg> Voice</button>
+    <button class="btn btn-red btn-sm" onclick="go('emergency-select')">🚨 SOS</button>
+  </div>
+</div>
+</div>
+<div class="s" id="voice-nav">
+<div class="sb dk" style="background:var(--navy)"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0">
+  <button class="back-btn" onclick="go('driver-navigation')" style="background:rgba(255,255,255,.1);color:#fff"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button>
+  <div style="flex:1"><div class="h4 cw">Voice Navigator</div><div class="cap" style="color:rgba(255,255,255,.5)">Speaking in English (India)</div></div>
+  <span class="badge" style="background:rgba(22,163,74,.2);color:#22C55E">&bull; ACTIVE</span>
+</div>
+<div class="scroll" style="background:var(--bg)">
+  <div style="padding:30px 20px;display:flex;flex-direction:column;align-items:center;gap:22px;background:linear-gradient(180deg,var(--navy),var(--bg))">
+    <div class="vorb">
+      <div class="vwaves">
+        <div class="vbar" style="height:14px"></div><div class="vbar" style="height:26px;animation-delay:.1s"></div><div class="vbar" style="height:38px;animation-delay:.2s"></div><div class="vbar" style="height:26px;animation-delay:.3s"></div><div class="vbar" style="height:14px;animation-delay:.4s"></div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.08);border-radius:var(--r4);padding:16px 20px;max-width:300px;text-align:center;border:1px solid rgba(255,255,255,.1)">
+      <div style="font-size:15px;font-weight:500;color:rgba(255,255,255,.9);line-height:1.5">&ldquo;In 2 minutes, take the next left toward <strong style="color:#06B6D4">Shillong Road (NH-40)</strong>.&rdquo;</div>
+    </div>
+  </div>
+  <div style="padding:0 16px 24px">
+    <div style="background:var(--amber-s);border:1px solid rgba(217,119,6,.2);border-radius:var(--r3);padding:14px 16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div style="width:28px;height:28px;background:var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 22 22"><use href="#i-warn"/></svg></div><span class="sm-m cam">Upcoming Warning</span></div>
+      <div class="sm c2">&ldquo;Heavy rainfall on NH-40 near Jorabat. Reduce speed and consider alternate route via Byrnihat.&rdquo;</div>
+    </div>
+    <div class="card cp mb3">
+      <div class="stitle">Voice Settings</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border2)"><div><div class="sm-m c1">Navigation Voice</div><div class="cap c2">Turn-by-turn instructions</div></div><div class="tgl on"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border2)"><div><div class="sm-m c1">Disaster Warnings</div><div class="cap c2">Alert announcements</div></div><div class="tgl on"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0"><div><div class="sm-m c1">Road Condition Updates</div><div class="cap c2">Traffic &amp; closures</div></div><div class="tgl on"></div></div>
+    </div>
+    <div class="card cp mb4">
+      <div class="stitle">Voice Language</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="border:2px solid var(--accent);border-radius:var(--r2);padding:10px;text-align:center;background:var(--accent-s)"><div class="sm-m ca">English (India)</div><div class="cap ca mt2" style="opacity:.7">Selected ✓</div></div>
+        <div style="border:1.5px solid var(--border);border-radius:var(--r2);padding:10px;text-align:center;cursor:pointer" onclick="go('driver-multilingual')"><div class="sm-m c1">Change Language</div><div class="cap c3 mt2">Tap to switch</div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn btn-out" onclick="go('driver-navigation')">Back to Nav</button><button class="btn btn-p">Repeat Last</button></div>
+  </div>
+</div>
+</div>
+<div class="s" id="emergency-select">
+<div class="sb" style="background:var(--red);color:#fff"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div style="background:var(--red);padding:16px 20px 22px;flex-shrink:0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <button onclick="go('driver-home')" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:8px 14px;border-radius:var(--rf);font-size:13px;font-weight:600;cursor:pointer">Cancel</button>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:1px">🚨 EMERGENCY</div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="tc"><div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:6px">What Happened?</div><div style="font-size:14px;color:rgba(255,255,255,.7)">Select type. GPS location auto-attaches.</div></div>
+</div>
+<div style="flex:1;padding:20px;background:var(--bg);border-radius:28px 28px 0 0;margin-top:-12px;overflow-y:auto">
+  <div class="et-grid mb5">
+    <div class="et-btn sel" onclick="selET(this)"><div style="font-size:28px">&#x26F0;</div><div class="sm-m c1">Landslide</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F30A;</div><div class="sm-m c1">Flood</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F327;</div><div class="sm-m c1">Heavy Rain</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F6A7;</div><div class="sm-m c1">Road Block</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F697;</div><div class="sm-m c1">Accident</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F329;</div><div class="sm-m c1">Severe Weather</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F198;</div><div class="sm-m c1">Other</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1FA7A;</div><div class="sm-m c1">Medical</div></div>
+  </div>
+  <div style="background:var(--surface);border-radius:var(--r3);padding:14px 16px;border:1px solid var(--border2);margin-bottom:20px">
+    <div class="stitle">Auto-Attached Data</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;background:var(--green);border-radius:50%"></div><span class="cap c2">GPS Location</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;background:var(--green);border-radius:50%"></div><span class="cap c2">Timestamp</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;background:var(--green);border-radius:50%"></div><span class="cap c2">Your Identity</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;background:var(--green);border-radius:50%"></div><span class="cap c2">Role: Driver</span></div>
+    </div>
+  </div>
+  <button class="btn btn-red btn-full btn-lg" onclick="go('emergency-sent')" style="box-shadow:0 6px 24px rgba(220,38,38,.4)">🚨 Send Emergency Alert</button>
+</div>
+</div>
+<div class="s" id="emergency-sent">
+<div class="sb" style="background:var(--red);color:#fff"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div style="background:var(--red);padding:14px 20px;flex-shrink:0;text-align:center"><div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:1px">🚨 EMERGENCY ALERT ACTIVE</div></div>
+<div style="flex:1;overflow-y:auto;background:var(--bg);border-radius:28px 28px 0 0;margin-top:-8px">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:28px 20px;text-align:center">
+    <div style="width:96px;height:96px;background:var(--green-s);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:22px;animation:bounceIn .5s ease"><svg width="52" height="52" viewBox="0 0 52 52"><use href="#i-chk"/></svg></div>
+    <div class="h2 c1 mb3">Alert Sent ✓</div>
+    <div class="sm c2 mb5">Emergency alert transmitted to all relevant teams and nearby units.</div>
+    <div class="card w100 mb4" style="border-left:4px solid var(--red);text-align:left">
+      <div style="padding:14px 16px;background:var(--red-s);border-radius:var(--r3) var(--r3) 0 0"><div style="font-size:16px;font-weight:800;color:var(--red)">&#x26F0; LANDSLIDE REPORTED</div><div class="cap cr mt2" style="opacity:.7">Guwahati, Assam &middot; High Severity</div></div>
+      <div style="padding:14px 16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div class="cap c3">Alert ID</div><div class="sm-m c1">#AE-29481</div></div>
+        <div><div class="cap c3">Sent at</div><div class="sm-m c1">14:22 IST</div></div>
+        <div><div class="cap c3">GPS</div><div class="sm-m c1">26.18&#xB0;N, 91.75&#xB0;E</div></div>
+        <div><div class="cap c3">Status</div><div class="sm-m cg">Received &#x2713;</div></div>
+      </div></div>
+    </div>
+    <div style="background:var(--accent-s);border-radius:var(--r3);padding:14px 16px;width:100%;margin-bottom:20px;display:flex;align-items:center;gap:12px;text-align:left">
+      <div style="width:40px;height:40px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 20 20"><use href="#i-mic"/></svg></div>
+      <div><div class="sm-m ca">Voice Alert Broadcasting</div><div class="cap c2">Notifying drivers in English &amp; Assamese</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%"><button class="btn btn-out" onclick="go('driver-home')">Return Home</button><button class="btn btn-p" onclick="go('disaster-map')">View on Map</button></div>
+  </div>
+</div>
+</div>
+<div class="s" id="disaster-map">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="ah"><button class="back-btn" onclick="go('driver-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Disaster Map</div><div class="ico-btn">&#x23F1;</div></div>
+<div style="padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border2);display:flex;gap:12px;overflow-x:auto;flex-shrink:0">
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--red);border-radius:50%"></div><span class="cap c2">Landslide</span></div>
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--orange);border-radius:50%"></div><span class="cap c2">Flood</span></div>
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--amber);border-radius:50%"></div><span class="cap c2">Weather</span></div>
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--accent);border-radius:50%"></div><span class="cap c2">Driver</span></div>
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--teal);border-radius:50%"></div><span class="cap c2">Field Officer</span></div>
+</div>
+<div style="flex:1;position:relative">
+  <div class="map-c" style="height:460px">
+    <svg class="msv" viewBox="0 0 390 460" xmlns="http://www.w3.org/2000/svg">
+    <rect width="390" height="460" fill="#E8EEF4"/>
+    <line x1="0" y1="230" x2="390" y2="230" class="r-maj"/>
+    <line x1="195" y1="0" x2="195" y2="460" class="r-maj"/>
+    <line x1="0" y1="115" x2="390" y2="115" class="r-min"/>
+    <line x1="0" y1="345" x2="390" y2="345" class="r-min"/>
+    <line x1="98" y1="0" x2="98" y2="460" class="r-min"/>
+    <line x1="295" y1="0" x2="295" y2="460" class="r-min"/>
+    <path d="M0 460 Q100 270 200 220 Q300 170 390 115" stroke="#C8D5E0" stroke-width="8" fill="none"/>
+    <path d="M50 430 Q180 230 260 190 Q330 150 360 50" class="r-glow"/>
+    <path d="M50 430 Q180 230 260 190 Q330 150 360 50" class="r-route"/>
+    <rect x="110" y="125" width="66" height="57" rx="4" class="bld"/>
+    <rect x="220" y="245" width="56" height="57" rx="4" class="bld"/>
+    <rect x="12" y="240" width="74" height="52" rx="4" class="bld2"/>
+    </svg>
+  <div class="mkr" style="left:77%;top:19%" onclick="document.getElementById('dPopup').style.display='block'"><div class="mkr-pin" style="background:var(--red);width:32px;height:32px;font-size:14px">&#x26F0;</div><div style="position:absolute;top:0;left:0;width:32px;height:32px;border-radius:50%;background:rgba(220,38,38,.12);animation:gpsPulse 2s ease infinite;pointer-events:none"></div></div>
+  <div class="mkr" style="left:29%;top:67%"><div class="mkr-pin" style="background:var(--orange);width:30px;height:30px;font-size:13px">&#x1F30A;</div></div>
+  <div class="mkr" style="left:54%;top:43%"><div class="mkr-pin" style="background:var(--amber);width:28px;height:28px;font-size:12px">&#x1F327;</div></div>
+  <div class="mkr" style="left:17%;top:31%"><div class="mkr-pin" style="background:var(--red);width:28px;height:28px;font-size:12px">&#x1F6A7;</div></div>
+  <div class="gps-wrap" style="left:50%;top:74%">
+    <div class="gps-ring" style="width:20px;height:20px;background:rgba(37,99,235,.12)"></div>
+    <div class="gps-ring r2" style="width:20px;height:20px;background:rgba(37,99,235,.1)"></div>
+    <div class="gps-dot" style="background:var(--accent)"></div>
+    </div>
+  <div class="mkr" style="left:64%;top:56%"><div style="width:28px;height:28px;background:var(--teal);border-radius:50%;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 3px 8px rgba(8,145,178,.4)">&#x1F464;</div></div>
+  <div id="dPopup" style="display:none;position:absolute;bottom:72px;left:14px;right:14px;background:#fff;border-radius:var(--r3);box-shadow:var(--sh4);padding:16px;border-left:4px solid var(--red);animation:fadeUp .3s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span class="badge b-red">LANDSLIDE</span><button onclick="document.getElementById('dPopup').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--txt3);font-size:20px;line-height:1">&#xD7;</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div><div class="cap c3">Distance</div><div class="sm-m c1">12 km ahead</div></div>
+      <div><div class="cap c3">Severity</div><div class="sm-m cr">High</div></div>
+      <div><div class="cap c3">Reported</div><div class="sm-m c1">4 min ago</div></div>
+      <div><div class="cap c3">Location</div><div class="sm-m c1">NH-40, Jorabat</div></div>
+    </div>
+    <div style="background:var(--amber-s);border-radius:var(--r2);padding:8px 12px;margin-bottom:10px"><div class="cap cam">&#x26A0; Alternative route recommended via Byrnihat</div></div>
+    <button class="btn btn-p btn-sm w100" onclick="go('driver-navigation')">Navigate Around</button>
+  </div>
+  <div class="map-fab" style="bottom:14px;right:14px"><svg width="20" height="20" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div>
+  </div>
+</div>
+<div class="bnav"><div class="ni" onclick="go('driver-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni" onclick="go('available-trips')"><svg viewBox="0 0 24 24"><use href="#i-trips"/></svg><span>Trips</span></div><div class="ni act" onclick="go('disaster-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('driver-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni" onclick="go('driver-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="driver-trip-status">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('driver-navigation')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Trip Status</div><span class="badge b-accent">IN PROGRESS</span></div>
+<div class="scroll" style="padding:16px 20px 24px">
+  <div style="background:linear-gradient(135deg,var(--navy),var(--navy-med));border-radius:var(--r3);padding:16px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="label" style="color:rgba(255,255,255,.4)">TRIP #TR-2048</span><span class="badge b-red">URGENT</span></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div><div style="font-size:11px;color:rgba(255,255,255,.4)">FROM</div><div class="sm-m cw">Guwahati DC</div></div><span style="color:rgba(255,255,255,.4)">&#x2192;</span><div><div style="font-size:11px;color:rgba(255,255,255,.4)">TO</div><div class="sm-m cw">Shillong WH</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+      <div><div style="font-size:10px;color:rgba(255,255,255,.4)">Distance</div><div style="font-size:13px;font-weight:600;color:#fff">142 km</div></div>
+      <div><div style="font-size:10px;color:rgba(255,255,255,.4)">Remaining</div><div style="font-size:13px;font-weight:600;color:#fff">98 km</div></div>
+      <div><div style="font-size:10px;color:rgba(255,255,255,.4)">ETA</div><div style="font-size:13px;font-weight:600;color:#fff">4:35 PM</div></div>
+    </div>
+  </div>
+  <div class="stitle">Delivery Progress</div>
+  <div style="padding:8px 0">
+    <div class="tl-item"><div class="tl-conn done"></div><div class="tl-dot done">&#x2713;</div><div style="padding-top:8px"><div class="sm-m cg">Trip Accepted</div><div class="cap c3">09:15 AM &middot; Confirmed</div></div></div>
+    <div class="tl-item"><div class="tl-conn done"></div><div class="tl-dot done">&#x2713;</div><div style="padding-top:8px"><div class="sm-m cg">Going to Pickup</div><div class="cap c3">09:22 AM &middot; En route to Guwahati DC</div></div></div>
+    <div class="tl-item"><div class="tl-conn done"></div><div class="tl-dot done">&#x2713;</div><div style="padding-top:8px"><div class="sm-m cg">Arrived at Pickup</div><div class="cap c3">10:05 AM &middot; Gate 3</div></div></div>
+    <div class="tl-item"><div class="tl-conn done"></div><div class="tl-dot done">&#x2713;</div><div style="padding-top:8px"><div class="sm-m cg">Package Loaded</div><div class="cap c3">10:42 AM &middot; 24 packages verified</div></div></div>
+    <div class="tl-item"><div class="tl-conn"></div><div class="tl-dot curr">&#x1F69A;</div><div style="padding-top:8px"><div class="sm-m ca">In Transit</div><div class="cap c3 mb2">Now &middot; 98 km remaining</div><div style="background:var(--accent-s);border-radius:var(--r2);padding:6px 10px"><div class="cap ca">On track &middot; ETA 4:35 PM</div></div></div></div>
+    <div class="tl-item"><div class="tl-conn"></div><div class="tl-dot"><svg width="14" height="14" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div><div style="padding-top:8px"><div class="sm-m c3">Arrived at Destination</div><div class="cap c3">Estimated 4:35 PM</div></div></div>
+    <div class="tl-item" style="padding-bottom:0"><div class="tl-dot">&#x2713;</div><div style="padding-top:8px"><div class="sm-m c3">Delivered</div><div class="cap c3">Pending proof of delivery</div></div></div>
+  </div>
+  <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button class="btn btn-out" onclick="go('driver-navigation')">Back to Nav</button>
+    <button class="btn btn-p" onclick="go('driver-home')">Home</button>
+  </div>
+</div>
+</div>
+<div class="s" id="driver-notifications">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('driver-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Notifications</div><button class="btn-ghost" style="font-size:12px;font-weight:600">Mark all read</button></div>
+<div class="scroll">
+  <div style="background:var(--red-s);border-left:4px solid var(--red)" class="nf-item">
+    <div class="nf-ico" style="background:var(--red)"><svg width="20" height="20" viewBox="0 0 22 22"><use href="#i-warn"/></svg></div>
+    <div style="flex:1"><div class="sm-m cr">&#x26A0; LANDSLIDE WARNING</div><div class="sm c2 mt2">Landslide reported 8 km ahead. High severity. Consider alternate route.</div><div class="cap c3 mt2">2 minutes ago &middot; Auto-dispatched</div></div>
+    <div style="width:8px;height:8px;background:var(--red);border-radius:50%;flex-shrink:0;margin-top:4px"></div>
+  </div>
+  <div class="nf-item">
+    <div class="nf-ico" style="background:var(--accent-s)">&#x2705;</div>
+    <div style="flex:1"><div class="sm-m c1">Trip #TR-2048 Accepted</div><div class="sm c2 mt2">Your trip to Shillong Warehouse has been confirmed.</div><div class="cap c3 mt2">18 minutes ago</div></div>
+    <div style="width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;margin-top:4px"></div>
+  </div>
+  <div class="nf-item">
+    <div class="nf-ico" style="background:var(--amber-s)"><svg width="18" height="18" viewBox="0 0 22 22"><use href="#i-warn"/></svg></div>
+    <div style="flex:1"><div class="sm-m c1">Weather Alert &mdash; Heavy Rain</div><div class="sm c2 mt2">Heavy rainfall expected on NH-40 between 2 PM&ndash;6 PM today.</div><div class="cap c3 mt2">1 hour ago &middot; IMD Weather</div></div>
+  </div>
+  <div class="nf-item" style="opacity:.7">
+    <div class="nf-ico" style="background:var(--bg)"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div>
+    <div style="flex:1"><div class="sm-m c1">Location Updated</div><div class="sm c2 mt2">Live location being shared with logistics network.</div><div class="cap c3 mt2">2 hours ago</div></div>
+  </div>
+</div>
+<div class="bnav"><div class="ni" onclick="go('driver-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni" onclick="go('available-trips')"><svg viewBox="0 0 24 24"><use href="#i-trips"/></svg><span>Trips</span></div><div class="ni" onclick="go('disaster-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni act" onclick="go('driver-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni" onclick="go('driver-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="driver-profile">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="prof-hdr">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="prof-big-av">RK</div>
+    <div><div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:3px">Rajesh Kumar Singh</div><div class="sdot"><div class="dot dot-g"></div><span class="sm cw" style="opacity:.7">Online &middot; Driver</span></div><div class="mt2"><span class="badge" style="background:rgba(37,99,235,.2);color:rgba(255,255,255,.8);font-size:10px">&#x2605; 4.8 Rating &middot; 284 Trips</span></div></div>
+  </div>
+  <div class="pstat-grid">
+    <div class="pstat-item"><div style="font-size:20px;font-weight:800;color:#fff">284</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Trips</div></div>
+    <div class="pstat-item"><div style="font-size:20px;font-weight:800;color:#fff">18.2k</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">km</div></div>
+    <div class="pstat-item"><div style="font-size:20px;font-weight:800;color:#fff">4.8&#x2605;</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Rating</div></div>
+  </div>
+</div>
+<div class="scroll" style="padding:16px">
+  <div class="card cp mb4">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="sm-m c1">Profile Completeness</div><span class="badge b-amber">70%</span></div>
+    <div class="pbar mb3"><div class="pfill" style="width:70%"></div></div>
+    <div class="cap c2">Add date of birth and bio to reach 100%</div>
+  </div>
+  <div class="vc-card" style="margin:0 0 16px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px">MY VEHICLE</div><div style="font-size:17px;font-weight:800;color:#fff">Tata 407</div><div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.7);font-family:monospace;letter-spacing:1.5px">TN 04 AB 2048</div></div>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="go('driver-vehicle')">Edit</button>
+    </div>
+  </div>
+  <div class="card mb4">
+    <div class="irow" style="padding:14px 16px;cursor:pointer" onclick="go('driver-profile-setup')"><div class="iico" style="background:var(--accent-s);color:var(--accent)">&#x1F464;</div><div style="flex:1"><div class="sm-m c1">Edit Profile</div><div class="cap c3">Update personal information</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+    <div class="irow" style="padding:14px 16px;cursor:pointer" onclick="go('driver-multilingual')"><div class="iico" style="background:var(--teal-s);color:var(--teal)"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-globe"/></svg></div><div style="flex:1"><div class="sm-m c1">Language &amp; Voice</div><div class="cap c3">English (India) &middot; Female voice</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+    <div class="irow" style="padding:14px 16px;cursor:pointer" onclick="go('driver-trip-status')"><div class="iico" style="background:var(--green-s);color:var(--green)">&#x1F4CB;</div><div style="flex:1"><div class="sm-m c1">Trip History</div><div class="cap c3">284 completed trips</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+    <div class="irow" style="padding:14px 16px;cursor:pointer;border-bottom:none" onclick="go('splash')"><div class="iico" style="background:var(--red-s);color:var(--red)">&#x1F6AA;</div><div style="flex:1"><div class="sm-m cr">Sign Out</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  </div>
+</div>
+<div class="bnav"><div class="ni" onclick="go('driver-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni" onclick="go('available-trips')"><svg viewBox="0 0 24 24"><use href="#i-trips"/></svg><span>Trips</span></div><div class="ni" onclick="go('disaster-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('driver-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni act" onclick="go('driver-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="driver-multilingual">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('driver-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Language &amp; Voice</div></div>
+<div class="scroll">
+  <div style="padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border2)">
+    <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rf);padding:10px 16px;display:flex;align-items:center;gap:10px">
+      <span>&#x1F50D;</span><input type="text" placeholder="Search language..." style="background:none;border:none;font-size:14px;color:var(--txt);flex:1">
+    </div>
+  </div>
+  <div style="padding:16px">
+    <div class="card cp mb4">
+      <div class="stitle">Voice Settings</div>
+      <div class="inp-grp mb3"><div class="inp-lbl">Voice Gender</div><div style="display:flex;gap:8px"><button style="flex:1;padding:10px;border:2px solid var(--accent);border-radius:var(--r2);background:var(--accent-s);font-size:13px;font-weight:600;color:var(--accent);cursor:pointer">Female</button><button style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--r2);background:#fff;font-size:13px;font-weight:600;color:var(--txt2);cursor:pointer">Male</button></div></div>
+      <div class="inp-grp" style="margin-bottom:0"><div class="inp-lbl">Speech Speed</div><div style="display:flex;gap:6px"><button style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:var(--r2);background:#fff;font-size:12px;font-weight:600;color:var(--txt2);cursor:pointer">0.75&#xD7;</button><button style="flex:1;padding:8px;border:2px solid var(--accent);border-radius:var(--r2);background:var(--accent-s);font-size:12px;font-weight:600;color:var(--accent);cursor:pointer">1.0&#xD7;</button><button style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:var(--r2);background:#fff;font-size:12px;font-weight:600;color:var(--txt2);cursor:pointer">1.25&#xD7;</button><button style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:var(--r2);background:#fff;font-size:12px;font-weight:600;color:var(--txt2);cursor:pointer">1.5&#xD7;</button></div></div>
+    </div>
+  </div>
+  <div style="padding:0 16px 6px"><div class="stitle">Interface Language</div></div>
+  <div class="lang-it" style="background:var(--accent-s);border-left:3px solid var(--accent)"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">English (India)</div><div class="cap c2">English &mdash; Selected &#x2713;</div></div></div><div class="lang-ck"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">&#x939;&#x93F;&#x928;&#x94D;&#x926;&#x940;</div><div class="cap c2">Hindi</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">&#x9AC;&#x9BE;&#x982;&#x9B2;&#x9BE;</div><div class="cap c2">Bengali</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">&#xBA4;&#xBAE;&#xBBF;&#xBB4;&#xBCD;</div><div class="cap c2">Tamil</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div style="padding:12px 16px 6px"><div class="stitle">&#x1F31F; NER Languages &mdash; Special Support</div></div>
+  <div style="background:var(--teal-s);padding:10px 16px;border-bottom:1px solid rgba(8,145,178,.1)"><div class="cap ct">Enhanced support for North Eastern Region field operations.</div></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">&#x985;&#x9B8;&#x9AE;&#x9C0;&#x9AF;&#x9BC;&#x9BE;</div><div class="cap c2">Assamese &middot; Assam</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">Ka Ktien Khasi</div><div class="cap c2">Khasi &middot; Meghalaya</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">Mizo &#x1D41A;&#x1D41D;&#x1D417;&#x1D41A;</div><div class="cap c2">Mizo &middot; Mizoram</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">Bodo / Boro</div><div class="cap c2">Boro &middot; Assam</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div class="lang-it"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">Manipuri</div><div class="cap c2">Meitei &middot; Manipur</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  <div class="lang-it" style="margin-bottom:24px"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:20px">&#x1F1EE;&#x1F1F3;</span><div><div class="sm-m c1">Nagamese</div><div class="cap c2">Nagamese &middot; Nagaland</div></div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+</div>
+</div>
+<div class="s" id="fo-profile-setup">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><div style="flex:1"><div class="h4 c1">Complete Your Profile</div><div class="cap c2 mt2">Field Officer Information</div></div><button class="btn-ghost" style="font-size:13px;font-weight:600" onclick="go('fo-home')">Skip</button></div>
+<div style="padding:12px 20px 0;flex-shrink:0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="sm-m c1">Profile 60% Complete</span><span class="sm c3">— add more info</span></div>
+  <div class="pbar mb4"><div class="pfill" style="width:60%;background:linear-gradient(90deg,var(--teal),var(--teal-l))"></div></div>
+</div>
+<div class="scroll" style="padding:0 20px 24px">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:16px 0 20px">
+    <div class="ph-circle" style="background:linear-gradient(135deg,var(--teal),var(--teal-l))">AS<div class="ph-edit" style="background:var(--teal)">&#x270F;</div></div>
+    <div class="ph-acts"><button class="ph-act">&#x1F4F7; Take Photo</button><button class="ph-act">&#x1F5BC; Upload</button></div>
+  </div>
+  <div class="card cp mb4">
+    <div class="stitle">Officer Information</div>
+    <div class="inp-grp"><div class="inp-lbl">Full Name</div><div class="inp-wrap"><span class="inp-ico">&#x1F464;</span><input type="text" value="Anjali Singh"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Employee ID</div><div class="inp-wrap"><span class="inp-ico">&#x1FA96;</span><input type="text" value="FO-2024-83741"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Department</div><div class="inp-wrap"><span class="inp-ico">&#x1F3E2;</span><input type="text" value="Disaster Management Authority"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Designation</div><div class="inp-wrap"><span class="inp-ico">&#x1F4BC;</span><input type="text" value="Senior Field Officer"></div></div>
+    <div class="inp-grp" style="margin-bottom:0"><div class="inp-lbl">Assigned Region</div><div class="inp-wrap"><span class="inp-ico"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></span><input type="text" value="Guwahati &amp; Surrounds, Assam"></div></div>
+  </div>
+  <button class="btn btn-teal btn-full btn-lg mb3" onclick="go('fo-home')">Save &amp; Continue &#x2192;</button>
+  <button class="btn btn-ghost btn-full" onclick="go('fo-home')">Save &amp; Complete Later</button>
+</div>
+</div>
+<div class="s" id="fo-home">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="ah">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="av" style="background:linear-gradient(135deg,var(--teal),var(--teal-l))">AS</div>
+    <div><div class="sm-m c1">Anjali Singh</div><div class="sdot"><div class="dot dot-g"></div><span class="cap cg">On Duty</span></div></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <div class="ico-btn" onclick="go('driver-multilingual')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-globe"/></svg></div>
+    <div class="ico-btn" style="position:relative" onclick="go('fo-notifications')">
+      <svg width="18" height="18" viewBox="0 0 24 24"><use href="#i-bell"/></svg>
+      <div style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:1.5px solid #fff"></div>
+    </div>
+  </div>
+</div>
+<div class="scroll">
+  <div style="position:relative;height:220px;flex-shrink:0">
+    <div class="map-c" style="height:220px">
+    <svg class="msv" viewBox="0 0 390 220" xmlns="http://www.w3.org/2000/svg">
+    <rect width="390" height="220" fill="#E8EEF4"/>
+    <line x1="0" y1="110" x2="390" y2="110" class="r-maj"/>
+    <line x1="195" y1="0" x2="195" y2="220" class="r-maj"/>
+    <line x1="0" y1="55" x2="390" y2="55" class="r-min"/>
+    <line x1="0" y1="165" x2="390" y2="165" class="r-min"/>
+    <line x1="98" y1="0" x2="98" y2="220" class="r-min"/>
+    <line x1="295" y1="0" x2="295" y2="220" class="r-min"/>
+    <path d="M0 220 Q100 150 200 100 Q300 50 390 55" stroke="#C8D5E0" stroke-width="8" fill="none"/>
+    <path d="M50 190 Q180 110 260 70 Q330 30 360 50" class="r-glow"/>
+    <path d="M50 190 Q180 110 260 70 Q330 30 360 50" class="r-route"/>
+    <rect x="110" y="65" width="66" height="27" rx="4" class="bld"/>
+    <rect x="220" y="125" width="56" height="27" rx="4" class="bld"/>
+    <rect x="12" y="120" width="74" height="22" rx="4" class="bld2"/>
+    </svg>
+    <div class="mkr" style="left:50%;top:72%"><div style="width:28px;height:28px;background:var(--teal);border-radius:50%;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 3px 8px rgba(8,145,178,.4)">&#x1F464;</div></div>
+    <div class="mkr" style="left:80%;top:25%"><div class="mkr-pin" style="background:var(--red);width:30px;height:30px;font-size:13px;animation:blink 3s ease infinite">&#x26F0;</div></div>
+    <div class="mkr" style="left:30%;top:64%"><div class="mkr-pin" style="background:var(--orange);width:28px;height:28px;font-size:12px">&#x1F30A;</div></div>
+    <div class="mkr" style="left:66%;top:55%"><div style="width:26px;height:26px;background:var(--accent);border-radius:50%;border:2.5px solid #fff;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(37,99,235,.4)">&#x1F69A;</div></div>
+    <div class="map-fab" style="bottom:12px;right:12px"><svg width="20" height="20" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div>
+    <div style="position:absolute;top:10px;left:12px;background:#fff;border-radius:var(--rf);padding:6px 14px;box-shadow:var(--sh1);display:flex;align-items:center;gap:6px"><div class="dot dot-g" style="animation:blink 2s ease infinite"></div><span style="font-size:12px;font-weight:600;color:var(--txt)">Field Tracking ON</span></div>
+    </div>
+  </div>
+  <div style="padding:14px 16px 80px">
+    <div style="background:var(--surface);border-radius:var(--r3);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh1);border:1px solid var(--border2);margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;background:var(--teal-s);border-radius:10px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div>
+        <div><div class="sm-m c1">Location Sharing: <span style="color:var(--teal)">ON</span></div><div class="cap c2">HQ Tracking Active &middot; Updated 5s ago</div></div>
+      </div>
+      <div class="tgl on" style="background:var(--teal)"></div>
+    </div>
+    <div class="stitle">Quick Actions</div>
+    <div class="fo-qa mb4">
+      <div class="fo-qcard" onclick="go('fo-report')"><div class="fo-qico" style="background:var(--red-s)">&#x1F6A8;</div><div class="sm-m c1">Report Incident</div><div class="cap c3">Submit disaster report</div></div>
+      <div class="fo-qcard" onclick="go('fo-evidence')"><div class="fo-qico" style="background:var(--accent-s)">&#x1F4F7;</div><div class="sm-m c1">Upload Evidence</div><div class="cap c3">Photos &amp; videos</div></div>
+      <div class="fo-qcard" onclick="go('fo-emergency')" style="border-color:rgba(220,38,38,.2);background:var(--red-s)"><div class="fo-qico" style="background:var(--red)">&#x1F198;</div><div class="sm-m cr">Emergency</div><div class="cap c3">Send SOS alert</div></div>
+      <div class="fo-qcard" onclick="go('fo-notifications')"><div class="fo-qico" style="background:var(--amber-s)">&#x26A0;</div><div class="sm-m c1">View Alerts</div><div class="cap c3">3 new alerts</div></div>
+    </div>
+    <div class="stitle">Active Incidents Nearby</div>
+    <div class="card cp mb3">
+      <div class="irow" style="cursor:pointer" onclick="go('fo-report')"><div class="iico" style="background:var(--red-s)">&#x26F0;</div><div style="flex:1"><div class="sm-m c1">Landslide &mdash; NH-40 Jorabat</div><div class="cap c2">High severity &middot; 4 min ago</div></div><span class="badge b-red">HIGH</span></div>
+      <div class="irow" style="cursor:pointer;border-bottom:none"><div class="iico" style="background:var(--orange-s)">&#x1F30A;</div><div style="flex:1"><div class="sm-m c1">Flood Risk &mdash; Brahmaputra Banks</div><div class="cap c2">Medium severity &middot; Monitoring</div></div><span class="badge b-orange">MED</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div class="card cp tc"><div style="font-size:20px;font-weight:800;color:var(--red)">3</div><div class="cap c2 mt2">Active</div></div>
+      <div class="card cp tc"><div style="font-size:20px;font-weight:800;color:var(--amber)">8</div><div class="cap c2 mt2">Reports</div></div>
+      <div class="card cp tc"><div style="font-size:20px;font-weight:800;color:var(--green)">12</div><div class="cap c2 mt2">Resolved</div></div>
+    </div>
+  </div>
+</div>
+<div class="efab" onclick="go('fo-emergency')" style="bottom:90px"><svg width="22" height="22" viewBox="0 0 22 22"><use href="#i-sos"/></svg><div class="efab-lbl">SOS</div></div>
+<div class="bnav"><div class="ni act-t" onclick="go('fo-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni" onclick="go('fo-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('fo-report')"><svg viewBox="0 0 24 24"><use href="#i-rpts"/></svg><span>Reports</span></div><div class="ni" onclick="go('fo-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni" onclick="go('fo-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="fo-evidence">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('fo-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Upload Evidence</div></div>
+<div class="scroll" style="padding:16px 20px 24px">
+  <div style="background:var(--green-s);border:1px solid rgba(22,163,74,.2);border-radius:var(--r3);padding:13px 16px;display:flex;gap:10px;margin-bottom:16px">
+    <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x2705;</span>
+    <div class="sm cg">GPS location, timestamp, and officer identity auto-attached to all uploads.</div>
+  </div>
+  <div class="upzone mb4">
+    <div style="font-size:40px">&#x1F4C1;</div>
+    <div class="sm-m c1">Drop files here or tap to browse</div>
+    <div class="cap c3">JPG, PNG, MP4, MOV &middot; Max 50MB each</div>
+  </div>
+  <div class="up-acts">
+    <div class="up-btn"><div style="font-size:24px">&#x1F4F7;</div>Take Photo</div>
+    <div class="up-btn"><div style="font-size:24px">&#x1F3A5;</div>Record Video</div>
+    <div class="up-btn"><div style="font-size:24px">&#x1F5BC;</div>From Gallery</div>
+  </div>
+  <div class="stitle">Uploaded (3 files)</div>
+  <div class="ev-grid mb4">
+    <div class="ev-thumb" style="background:linear-gradient(135deg,#334155,#475569)"><span>&#x1F3D4;</span><div style="position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(220,38,38,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:11px">&#xD7;</div></div>
+    <div class="ev-thumb" style="background:linear-gradient(135deg,#1e3a5f,#2563EB30)"><span>&#x1F30A;</span><div style="position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(220,38,38,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:11px">&#xD7;</div></div>
+    <div class="ev-thumb" style="background:linear-gradient(135deg,#713f12,#92400e30)"><span style="font-size:14px">&#x1F3A5;<br><span style="font-size:9px;color:rgba(255,255,255,.7)">0:34</span></span><div style="position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(220,38,38,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:11px">&#xD7;</div></div>
+  </div>
+  <div class="card cp mb4">
+    <div class="stitle">Evidence Metadata</div>
+    <div class="irow"><div class="iico"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div><div style="flex:1"><div class="cap c3">GPS Location</div><div class="sm-m c1">26.1445&#xB0;N, 91.7362&#xB0;E &middot; &#xB14;m</div></div></div>
+    <div class="irow"><div class="iico">&#x1F550;</div><div style="flex:1"><div class="cap c3">Timestamp</div><div class="sm-m c1">27 Aug 2026, 14:22:15 IST</div></div></div>
+    <div class="irow" style="border-bottom:none"><div class="iico">&#x1F464;</div><div style="flex:1"><div class="cap c3">Recorded by</div><div class="sm-m c1">FO-2024-83741 &middot; Anjali Singh</div></div></div>
+  </div>
+  <div class="inp-grp mb4">
+    <div class="inp-lbl">Associated Incident</div>
+    <div class="inp-wrap"><select style="padding-left:16px"><option>INC-48291 &mdash; Landslide NH-40</option><option>INC-48289 &mdash; Flood Risk</option><option>New Incident</option></select></div>
+  </div>
+  <button class="btn btn-teal btn-full btn-lg" onclick="go('fo-report-confirm')">Upload &amp; Attach Evidence</button>
+</div>
+</div>
+<div class="s" id="fo-report">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('fo-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Create Incident Report</div></div>
+<div class="scroll" style="padding:16px 20px;padding-bottom:100px">
+  <div class="card cp mb3">
+    <div class="stitle">Incident Type</div>
+    <div class="it-grid">
+      <div class="it-btn sel"><span style="font-size:18px">&#x26F0;</span><span class="sm-m c1">Landslide</span></div>
+      <div class="it-btn" onclick="selIT(event)"><span style="font-size:18px">&#x1F30A;</span><span class="sm-m c1">Flood</span></div>
+      <div class="it-btn" onclick="selIT(event)"><span style="font-size:18px">&#x1F327;</span><span class="sm-m c1">Heavy Rain</span></div>
+      <div class="it-btn" onclick="selIT(event)"><span style="font-size:18px">&#x1F6E3;</span><span class="sm-m c1">Road Damage</span></div>
+      <div class="it-btn" onclick="selIT(event)"><span style="font-size:18px">&#x1F697;</span><span class="sm-m c1">Accident</span></div>
+      <div class="it-btn" onclick="selIT(event)"><span style="font-size:18px">&#x1F6A7;</span><span class="sm-m c1">Road Block</span></div>
+      <div class="it-btn" onclick="selIT(event)"><span style="font-size:18px">&#x1F329;</span><span class="sm-m c1">Severe Weather</span></div>
+      <div class="it-btn" onclick="selIT(event)"><span style="font-size:18px">&#x1F4CB;</span><span class="sm-m c1">Other</span></div>
+    </div>
+  </div>
+  <div class="card cp mb3">
+    <div class="stitle">Severity Level</div>
+    <div class="sev-opts"><div class="sev-btn low">Low</div><div class="sev-btn med">Medium</div><div class="sev-btn hi">High</div><div class="sev-btn crit sel">Critical</div></div>
+  </div>
+  <div class="card cp mb3">
+    <div class="stitle">Location</div>
+    <div style="height:90px;border-radius:var(--r2);overflow:hidden;margin-bottom:10px;position:relative;cursor:pointer">
+      <div class="map-c" style="height:90px">
+    <svg class="msv" viewBox="0 0 390 90" xmlns="http://www.w3.org/2000/svg">
+    <rect width="390" height="90" fill="#E8EEF4"/>
+    <line x1="0" y1="45" x2="390" y2="45" class="r-maj"/>
+    <line x1="195" y1="0" x2="195" y2="90" class="r-maj"/>
+    <line x1="0" y1="22" x2="390" y2="22" class="r-min"/>
+    <line x1="0" y1="67" x2="390" y2="67" class="r-min"/>
+    <line x1="98" y1="0" x2="98" y2="90" class="r-min"/>
+    <line x1="295" y1="0" x2="295" y2="90" class="r-min"/>
+    <path d="M0 90 Q100 85 200 35 Q300 -15 390 22" stroke="#C8D5E0" stroke-width="8" fill="none"/>
+    <path d="M50 60 Q180 45 260 5 Q330 -35 360 50" class="r-glow"/>
+    <path d="M50 60 Q180 45 260 5 Q330 -35 360 50" class="r-route"/>
+    <rect x="110" y="32" width="66" height="11" rx="4" class="bld"/>
+    <rect x="220" y="60" width="56" height="11" rx="4" class="bld"/>
+    <rect x="12" y="55" width="74" height="6" rx="4" class="bld2"/>
+    </svg>
+      <div class="gps-wrap" style="left:50%;top:50%">
+    <div class="gps-ring" style="width:20px;height:20px;background:rgba(37,99,235,.12)"></div>
+    <div class="gps-ring r2" style="width:20px;height:20px;background:rgba(37,99,235,.1)"></div>
+    <div class="gps-dot" style="background:var(--red)"></div>
+    </div>
+      <div style="position:absolute;bottom:6px;right:8px;background:#fff;border-radius:var(--rf);padding:3px 8px;font-size:10px;font-weight:600;color:var(--txt2)">Tap to reposition</div>
+      </div>
+    </div>
+    <div class="sm-m c1 mb2">NH-40, Jorabat, Assam</div>
+    <div class="cap c3">26.1445&#xB0;N, 91.7362&#xB0;E &middot; Auto-detected</div>
+  </div>
+  <div class="card cp mb3">
+    <div class="stitle">Incident Details</div>
+    <div class="inp-grp"><div class="inp-lbl">Date &amp; Time</div><div class="inp-wrap"><span class="inp-ico">&#x1F550;</span><input type="text" value="27 Aug 2026, 14:18"></div></div>
+    <div class="inp-grp"><div class="inp-lbl">Description</div><div class="inp-wrap"><textarea style="padding:13px 16px;min-height:80px;resize:none">Major landslide blocking NH-40 near Jorabat. Road fully blocked. Debris covering approx 200m.</textarea></div></div>
+    <div class="inp-grp"><div class="inp-lbl">People Affected (est.)</div><div class="inp-wrap"><span class="inp-ico">&#x1F464;</span><input type="number" value="150"></div></div>
+    <div class="inp-grp" style="margin-bottom:0"><div class="inp-lbl">Vehicle Accessibility</div><div class="inp-wrap"><select style="padding-left:16px"><option>No Access</option><option>Emergency Vehicles Only</option><option>Small Vehicles Only</option><option>All Vehicles</option></select></div></div>
+  </div>
+</div>
+<div class="sticky-cta"><button class="btn btn-teal btn-full btn-lg" onclick="go('fo-report-confirm')">Submit Report</button></div>
+</div>
+<div class="s" id="fo-report-confirm">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('fo-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Report Submitted</div></div>
+<div class="scroll">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:28px 20px;text-align:center">
+    <div style="width:90px;height:90px;background:var(--green-s);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:22px;animation:bounceIn .6s ease"><svg width="48" height="48" viewBox="0 0 52 52"><use href="#i-chk"/></svg></div>
+    <div class="h2 c1 mb3">Report Submitted &#x2713;</div>
+    <div class="sm c2 mb5 tc">Your incident report is under review by the coordination team.</div>
+    <div class="card w100 mb4" style="text-align:left;border-left:4px solid var(--teal)">
+      <div style="padding:14px 16px;background:var(--teal-s);border-radius:var(--r3) var(--r3) 0 0"><div style="font-size:15px;font-weight:800;color:var(--teal)">&#x26F0; Landslide &mdash; NH-40 Jorabat</div><div class="cap ct mt2" style="opacity:.7">Critical Severity</div></div>
+      <div style="padding:14px 16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div class="cap c3">Report ID</div><div class="sm-m c1">#INC-48291</div></div>
+        <div><div class="cap c3">Submitted</div><div class="sm-m c1">14:22 IST</div></div>
+        <div><div class="cap c3">Location</div><div class="sm-m c1">Jorabat, Assam</div></div>
+        <div><div class="cap c3">Status</div><div class="sm-m cam">Under Review</div></div>
+      </div></div>
+    </div>
+    <div style="background:var(--accent-s);border-radius:var(--r3);padding:14px 16px;width:100%;margin-bottom:20px;display:flex;align-items:center;gap:12px;text-align:left">
+      <div style="width:40px;height:40px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#x1F4E1;</div>
+      <div><div class="sm-m ca">Alert Broadcast Active</div><div class="cap c2">Notifying drivers on affected route in 3 languages</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%"><button class="btn btn-out" onclick="go('fo-home')">Return Home</button><button class="btn btn-teal" onclick="go('fo-evidence')">Add Evidence</button></div>
+  </div>
+</div>
+</div>
+<div class="s" id="fo-emergency">
+<div class="sb" style="background:var(--red);color:#fff"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div style="background:var(--red);padding:16px 20px 22px;flex-shrink:0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <button onclick="go('fo-home')" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:8px 14px;border-radius:var(--rf);font-size:13px;font-weight:600;cursor:pointer">Cancel</button>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:1px">&#x1F6A8; FO EMERGENCY</div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="tc"><div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:6px">What Happened?</div><div style="font-size:14px;color:rgba(255,255,255,.7)">Quick alert &middot; GPS &amp; ID auto-attach.</div></div>
+</div>
+<div style="flex:1;padding:20px;background:var(--bg);border-radius:28px 28px 0 0;margin-top:-12px;overflow-y:auto">
+  <div class="et-grid mb4">
+    <div class="et-btn sel" onclick="selET(this)"><div style="font-size:28px">&#x26F0;</div><div class="sm-m c1">Landslide</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F30A;</div><div class="sm-m c1">Flood</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F6A8;</div><div class="sm-m c1">Mass Casualty</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F329;</div><div class="sm-m c1">Severe Weather</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F525;</div><div class="sm-m c1">Fire</div></div>
+    <div class="et-btn" onclick="selET(this)"><div style="font-size:28px">&#x1F198;</div><div class="sm-m c1">Personal SOS</div></div>
+  </div>
+  <div class="inp-grp mb4"><div class="inp-lbl">Add Description (optional)</div><div class="inp-wrap"><textarea style="padding:13px 16px;min-height:64px;resize:none;border:1.5px solid var(--border);border-radius:var(--r2);width:100%" placeholder="Brief description of the situation..."></textarea></div></div>
+  <button class="btn btn-red btn-full btn-lg" onclick="go('emergency-sent')" style="box-shadow:0 6px 24px rgba(220,38,38,.4)">&#x1F6A8; Send Emergency Alert</button>
+</div>
+</div>
+<div class="s" id="fo-map">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="ah"><button class="back-btn" onclick="go('fo-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Field Map</div><div class="ico-btn">&#x23E9;</div></div>
+<div style="padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border2);display:flex;gap:12px;overflow-x:auto;flex-shrink:0">
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--red);border-radius:50%"></div><span class="cap c2">Landslide</span></div>
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--orange);border-radius:50%"></div><span class="cap c2">Flood</span></div>
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--accent);border-radius:50%"></div><span class="cap c2">Driver</span></div>
+  <div style="display:flex;align-items:center;gap:5px;white-space:nowrap"><div style="width:10px;height:10px;background:var(--teal);border-radius:50%"></div><span class="cap c2">Field Officer</span></div>
+</div>
+<div style="flex:1;position:relative">
+  <div class="map-c" style="height:460px">
+    <svg class="msv" viewBox="0 0 390 460" xmlns="http://www.w3.org/2000/svg">
+    <rect width="390" height="460" fill="#E8EEF4"/>
+    <line x1="0" y1="230" x2="390" y2="230" class="r-maj"/>
+    <line x1="195" y1="0" x2="195" y2="460" class="r-maj"/>
+    <line x1="0" y1="115" x2="390" y2="115" class="r-min"/>
+    <line x1="0" y1="345" x2="390" y2="345" class="r-min"/>
+    <line x1="98" y1="0" x2="98" y2="460" class="r-min"/>
+    <line x1="295" y1="0" x2="295" y2="460" class="r-min"/>
+    <path d="M0 460 Q100 270 200 220 Q300 170 390 115" stroke="#C8D5E0" stroke-width="8" fill="none"/>
+    <path d="M50 430 Q180 230 260 190 Q330 150 360 50" class="r-glow"/>
+    <path d="M50 430 Q180 230 260 190 Q330 150 360 50" class="r-route"/>
+    <rect x="110" y="125" width="66" height="57" rx="4" class="bld"/>
+    <rect x="220" y="245" width="56" height="57" rx="4" class="bld"/>
+    <rect x="12" y="240" width="74" height="52" rx="4" class="bld2"/>
+    </svg>
+  <div class="mkr" style="left:77%;top:19%"><div class="mkr-pin" style="background:var(--red);width:32px;height:32px;font-size:14px">&#x26F0;</div></div>
+  <div class="mkr" style="left:29%;top:67%"><div class="mkr-pin" style="background:var(--orange);width:30px;height:30px;font-size:13px">&#x1F30A;</div></div>
+  <div class="mkr" style="left:66%;top:56%"><div style="width:26px;height:26px;background:var(--accent);border-radius:50%;border:2.5px solid #fff;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(37,99,235,.4)">&#x1F69A;</div></div>
+  <div class="mkr" style="left:50%;top:72%"><div style="width:28px;height:28px;background:var(--teal);border-radius:50%;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 3px 8px rgba(8,145,178,.4)">&#x1F464;</div></div>
+  <div class="map-fab" style="bottom:14px;right:14px"><svg width="20" height="20" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div>
+  <div class="map-fab" style="bottom:66px;right:14px" onclick="go('fo-report')"><span style="font-size:20px;color:var(--teal)">+</span></div>
+  </div>
+</div>
+<div class="bnav"><div class="ni" onclick="go('fo-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni act-t" onclick="go('fo-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('fo-report')"><svg viewBox="0 0 24 24"><use href="#i-rpts"/></svg><span>Reports</span></div><div class="ni" onclick="go('fo-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni" onclick="go('fo-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="fo-notifications">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('fo-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Alerts &amp; Notifications</div><button class="btn-ghost" style="font-size:12px;font-weight:600">Clear all</button></div>
+<div class="scroll">
+  <div style="background:var(--red-s);border-left:4px solid var(--red)" class="nf-item">
+    <div class="nf-ico" style="background:var(--red)">&#x26F0;</div>
+    <div style="flex:1"><div class="sm-m cr">&#x1F6A8; LANDSLIDE CONFIRMED</div><div class="sm c2 mt2">INC-48291 confirmed. NDRF teams dispatched to NH-40 Jorabat.</div><div class="cap c3 mt2">Just now &middot; System alert</div></div>
+    <div style="width:8px;height:8px;background:var(--red);border-radius:50%;flex-shrink:0;margin-top:4px"></div>
+  </div>
+  <div class="nf-item">
+    <div class="nf-ico" style="background:var(--accent-s)">&#x1F4E1;</div>
+    <div style="flex:1"><div class="sm-m c1">Report #INC-48291 Under Review</div><div class="sm c2 mt2">Your landslide report is being reviewed by the coordination center.</div><div class="cap c3 mt2">5 minutes ago</div></div>
+    <div style="width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;margin-top:4px"></div>
+  </div>
+  <div class="nf-item">
+    <div class="nf-ico" style="background:var(--amber-s)"><svg width="18" height="18" viewBox="0 0 22 22"><use href="#i-warn"/></svg></div>
+    <div style="flex:1"><div class="sm-m c1">Weather Advisory &mdash; Heavy Rain</div><div class="sm c2 mt2">IMD: Heavy to very heavy rainfall in Kamrup district next 6 hours.</div><div class="cap c3 mt2">1 hour ago &middot; IMD</div></div>
+  </div>
+  <div class="nf-item" style="opacity:.7">
+    <div class="nf-ico" style="background:var(--green-s)">&#x2705;</div>
+    <div style="flex:1"><div class="sm-m c1">Evidence Uploaded Successfully</div><div class="sm c2 mt2">3 files uploaded and attached to INC-48291.</div><div class="cap c3 mt2">2 hours ago</div></div>
+  </div>
+</div>
+<div class="bnav"><div class="ni" onclick="go('fo-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni" onclick="go('fo-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('fo-report')"><svg viewBox="0 0 24 24"><use href="#i-rpts"/></svg><span>Reports</span></div><div class="ni act-t" onclick="go('fo-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni" onclick="go('fo-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="fo-profile">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="prof-hdr" style="background:linear-gradient(160deg,#0A2A35,var(--teal))">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="prof-big-av" style="background:linear-gradient(135deg,var(--teal),var(--teal-l))">AS</div>
+    <div><div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:3px">Anjali Singh</div><div class="sdot"><div class="dot dot-g"></div><span class="sm cw" style="opacity:.7">On Duty &middot; Field Officer</span></div><div class="mt2"><span class="badge" style="background:rgba(8,145,178,.25);color:rgba(255,255,255,.8);font-size:10px">FO-2024-83741 &middot; Senior Officer</span></div></div>
+  </div>
+  <div class="pstat-grid">
+    <div class="pstat-item"><div style="font-size:20px;font-weight:800;color:#fff">47</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Reports</div></div>
+    <div class="pstat-item"><div style="font-size:20px;font-weight:800;color:#fff">8</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Active</div></div>
+    <div class="pstat-item"><div style="font-size:20px;font-weight:800;color:#fff">3yr</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Service</div></div>
+  </div>
+</div>
+<div class="scroll" style="padding:16px">
+  <div class="card cp mb4">
+    <div class="stitle">Assignment Info</div>
+    <div class="irow"><div class="iico" style="background:var(--teal-s);color:var(--teal)"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-loc"/></svg></div><div style="flex:1"><div class="cap c3">Assigned Region</div><div class="sm-m c1">Guwahati &amp; Surrounds, Assam</div></div></div>
+    <div class="irow"><div class="iico" style="background:var(--accent-s);color:var(--accent)">&#x1F3E2;</div><div style="flex:1"><div class="cap c3">Department</div><div class="sm-m c1">Disaster Management Authority</div></div></div>
+    <div class="irow" style="border-bottom:none"><div class="iico" style="background:var(--green-s);color:var(--green)">&#x1F4BC;</div><div style="flex:1"><div class="cap c3">Designation</div><div class="sm-m c1">Senior Field Officer</div></div></div>
+  </div>
+  <div class="card mb4">
+    <div class="irow" style="padding:14px 16px;cursor:pointer" onclick="go('fo-profile-setup')"><div class="iico" style="background:var(--teal-s);color:var(--teal)">&#x1F464;</div><div style="flex:1"><div class="sm-m c1">Edit Profile</div><div class="cap c3">Update officer information</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+    <div class="irow" style="padding:14px 16px;cursor:pointer" onclick="go('driver-multilingual')"><div class="iico" style="background:var(--accent-s);color:var(--accent)"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-globe"/></svg></div><div style="flex:1"><div class="sm-m c1">Language &amp; Voice</div><div class="cap c3">English (India) &middot; Female voice</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+    <div class="irow" style="padding:14px 16px;cursor:pointer" onclick="go('fo-security')"><div class="iico" style="background:var(--amber-s);color:var(--amber)">&#x1F512;</div><div style="flex:1"><div class="sm-m c1">Security &amp; PIN</div><div class="cap c3">Change PIN or biometric settings</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+    <div class="irow" style="padding:14px 16px;cursor:pointer;border-bottom:none" onclick="go('splash')"><div class="iico" style="background:var(--red-s);color:var(--red)">&#x1F6AA;</div><div style="flex:1"><div class="sm-m cr">Sign Out</div></div><svg width="16" height="16" viewBox="0 0 16 16"><use href="#i-chev"/></svg></div>
+  </div>
+</div>
+<div class="bnav"><div class="ni" onclick="go('fo-home')"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></div><div class="ni" onclick="go('fo-map')"><svg viewBox="0 0 24 24"><use href="#i-map"/></svg><span>Map</span></div><div class="ni" onclick="go('fo-report')"><svg viewBox="0 0 24 24"><use href="#i-rpts"/></svg><span>Reports</span></div><div class="ni" onclick="go('fo-notifications')"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg><span>Alerts</span></div><div class="ni act-t" onclick="go('fo-profile')"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><span>Profile</span></div></div>
+</div>
+<div class="s" id="offline">
+<div class="sb lt"><span style="font-weight:700">9:41</span><div style="display:flex;align-items:center;gap:5px">
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="3" width="3" height="8" rx="1"/><rect x="4.5" y="1.5" width="3" height="9.5" rx="1"/><rect x="9" y="0" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" opacity=".3"/></svg>
+    <svg width="15" height="11" viewBox="0 0 24 12" fill="currentColor"><path d="M1 4a11 11 0 0 1 22 0M5 7a7 7 0 0 1 14 0M9 10a3 3 0 0 1 6 0"/><circle cx="12" cy="10" r="1.5"/></svg>
+    <svg width="24" height="11" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="22" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/></svg>
+    </div></div>
+<div class="sh"><button class="back-btn" onclick="go('driver-home')"><svg width="18" height="18" viewBox="0 0 18 18"><use href="#i-back"/></svg></button><div class="sh-title">Connection Lost</div></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center">
+  <div style="width:100px;height:100px;background:var(--surface2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:44px">&#x1F4E1;</div>
+  <div class="h2 c1 mb3">You&rsquo;re Offline</div>
+  <div class="sm c2 mb4">No internet connection. Some features may be unavailable.</div>
+  <div style="background:var(--amber-s);border-radius:var(--r3);padding:14px 16px;width:100%;margin-bottom:20px;text-align:left">
+    <div class="sm-m cam mb3">Last Known Status</div>
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0"><div style="width:8px;height:8px;background:var(--green);border-radius:50%"></div><div class="sm c1">Last Location: NH-40, Jorabat &middot; 2 min ago</div></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0"><div style="width:8px;height:8px;background:var(--amber);border-radius:50%"></div><div class="sm c1">Active Trip: #TR-2048 &middot; In Progress (cached)</div></div>
+  </div>
+  <div style="background:var(--accent-s);border-radius:var(--r3);padding:14px 16px;width:100%;margin-bottom:24px;text-align:left">
+    <div class="sm-m ca mb2">Available Offline</div>
+    <div class="cap c2">&bull; Cached maps &amp; route<br>&bull; Last trip details<br>&bull; Emergency SOS (SMS fallback)<br>&bull; Downloaded reports</div>
+  </div>
+  <button class="btn btn-p btn-full btn-lg mb3">Try Reconnecting</button>
+  <button class="btn btn-ghost btn-full" onclick="go('driver-home')">Continue Offline</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+function go(id){
+  const cur=document.querySelector('.s.active');
+  const nxt=document.getElementById(id);
+  if(!nxt||cur===nxt)return;
+  cur.classList.add('exit');
+  nxt.classList.add('active');
+  setTimeout(()=>{cur.classList.remove('active','exit')},300);
+}
+function selET(el){
+  document.querySelectorAll('.et-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function selIT(e){
+  const el=e.currentTarget;
+  document.querySelectorAll('.it-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+setTimeout(()=>go('role-select'),2800);
+document.querySelectorAll('.tgl').forEach(t=>{
+  t.addEventListener('click',()=>t.classList.toggle('on'));
+});
+document.querySelectorAll('.sev-btn').forEach(b=>{
+  b.addEventListener('click',function(){
+    const p=this.parentNode;
+    p.querySelectorAll('.sev-btn').forEach(s=>s.classList.remove('sel'));
+    const cls=['low','med','hi','crit'].find(c=>this.classList.contains(c));
+    if(cls) this.classList.add('sel');
+  });
+});
+</script>
+</body>
+</html>
