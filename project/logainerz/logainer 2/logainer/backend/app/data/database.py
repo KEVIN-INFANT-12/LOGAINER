@@ -1,6 +1,7 @@
 import sqlite3
 import os
 import json
+import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any
 
@@ -91,6 +92,60 @@ def init_db():
             mid_trip_risk_level TEXT DEFAULT 'LOW',
             disruption_alert TEXT,
             updated_at TEXT
+        )
+    ''')
+
+    # What-If scenarios persistence table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS what_if_scenarios (
+            scenario_id TEXT PRIMARY KEY,
+            created_by TEXT,
+            scenario_type TEXT,
+            district TEXT,
+            parameters_json TEXT,
+            prediction_horizon TEXT,
+            predicted_risk REAL,
+            predicted_risk_level TEXT,
+            kpi_summary_json TEXT,
+            affected_roads_json TEXT,
+            affected_areas_json TEXT,
+            logistics_impact_json TEXT,
+            candidate_routes_json TEXT,
+            recommended_route_json TEXT,
+            model_metadata_json TEXT,
+            created_at TEXT
+        )
+    ''')
+
+    # System Audit logs table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS audit_logs (
+            log_id TEXT PRIMARY KEY,
+            user_id TEXT,
+            username TEXT,
+            action TEXT,
+            details_json TEXT,
+            ip_address TEXT,
+            timestamp TEXT
+        )
+    ''')
+
+    # Emergency Alerts table (Broadcast & Synchronization)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS emergencies (
+            emergency_id TEXT PRIMARY KEY,
+            sender_user_id TEXT,
+            sender_role TEXT,
+            sender_name TEXT,
+            emergency_type TEXT NOT NULL,
+            message TEXT,
+            latitude REAL,
+            longitude REAL,
+            location_name TEXT,
+            status TEXT DEFAULT 'ACTIVE',
+            resolved_by TEXT,
+            resolved_at TEXT,
+            created_at TEXT
         )
     ''')
 
@@ -235,9 +290,9 @@ def db_list_trips(driver_id: Optional[str] = None, status: Optional[str] = None)
     params = []
 
     if driver_id:
-        # Match specific driver or demo aliases
-        query += " AND (driver_id = ? OR driver_id = 'demo-driver' OR driver_id = 'DRV-102' OR ? = 'DRV-102' OR ? = 'demo-driver' OR ? LIKE '%driver%')"
-        params.extend([driver_id, driver_id, driver_id, driver_id])
+        # Match specific assigned driver OR unassigned available pool trips
+        query += " AND (driver_id = ? OR driver_id IS NULL OR driver_id = '' OR status IN ('AVAILABLE', 'available'))"
+        params.append(driver_id)
 
     if status and status != "ALL":
         # Normalize status checks
@@ -413,6 +468,239 @@ def db_update_trip_location(trip_id: str, lat: float, lng: float, speed_kmh: flo
     )
     conn.commit()
     conn.close()
+
+# ----------------- What-If Scenarios CRUD -----------------
+
+def db_save_what_if_scenario(scen_dict: Dict[str, Any]) -> Dict[str, Any]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    scenario_id = scen_dict.get("scenario_id") or f"SCEN-{uuid.uuid4().hex[:8].upper()}"
+    cursor.execute('''
+        INSERT OR REPLACE INTO what_if_scenarios (
+            scenario_id, created_by, scenario_type, district, parameters_json,
+            prediction_horizon, predicted_risk, predicted_risk_level,
+            kpi_summary_json, affected_roads_json, affected_areas_json,
+            logistics_impact_json, candidate_routes_json, recommended_route_json,
+            model_metadata_json, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        scenario_id,
+        scen_dict.get("created_by", "Admin Central Command"),
+        scen_dict.get("scenario_type", "continuous_rainfall"),
+        scen_dict.get("district", "NER Regional"),
+        json.dumps(scen_dict.get("parameters", {})),
+        scen_dict.get("prediction_horizon", "3 Days"),
+        float(scen_dict.get("predicted_risk_score", 0.35)),
+        scen_dict.get("predicted_risk_level", "LOW"),
+        json.dumps(scen_dict.get("kpi_summary", {})),
+        json.dumps(scen_dict.get("affected_roads", [])),
+        json.dumps(scen_dict.get("affected_areas", [])),
+        json.dumps(scen_dict.get("logistics_impact", {})),
+        json.dumps(scen_dict.get("candidate_routes", [])),
+        json.dumps(scen_dict.get("recommended_route", {})),
+        json.dumps(scen_dict.get("model_metadata", {})),
+        scen_dict.get("created_at", datetime.now(timezone.utc).isoformat())
+    ))
+
+    conn.commit()
+    conn.close()
+    return scen_dict
+
+def db_list_what_if_scenarios(limit: int = 20) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM what_if_scenarios ORDER BY created_at DESC LIMIT ?", (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    results = []
+    for r in rows:
+        item = dict(r)
+        for key in ["parameters_json", "kpi_summary_json", "affected_roads_json", "affected_areas_json", "logistics_impact_json", "candidate_routes_json", "recommended_route_json", "model_metadata_json"]:
+            clean_key = key.replace("_json", "")
+            if item.get(key):
+                try:
+                    item[clean_key] = json.loads(item[key])
+                except Exception:
+                    item[clean_key] = None
+        results.append(item)
+    return results
+
+def db_get_what_if_scenario(scenario_id: str) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM what_if_scenarios WHERE scenario_id = ?", (scenario_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return None
+    item = dict(row)
+    for key in ["parameters_json", "kpi_summary_json", "affected_roads_json", "affected_areas_json", "logistics_impact_json", "candidate_routes_json", "recommended_route_json", "model_metadata_json"]:
+        clean_key = key.replace("_json", "")
+        if item.get(key):
+            try:
+                item[clean_key] = json.loads(item[key])
+            except Exception:
+                item[clean_key] = None
+    return item
+
+# ----------------- System Audit Logs -----------------
+
+def db_log_audit(user_id: str, username: str, action: str, details: Optional[Dict[str, Any]] = None, ip_address: Optional[str] = "127.0.0.1"):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    log_id = f"AUD-{uuid.uuid4().hex[:10].upper()}"
+    timestamp = datetime.now(timezone.utc).isoformat()
+    cursor.execute('''
+        INSERT INTO audit_logs (log_id, user_id, username, action, details_json, ip_address, timestamp)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        log_id,
+        user_id,
+        username,
+        action,
+        json.dumps(details or {}),
+        ip_address,
+        timestamp
+    ))
+    conn.commit()
+    conn.close()
+
+def db_list_audit_logs(limit: int = 50) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT ?", (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+    logs = []
+    for r in rows:
+        item = dict(r)
+        if item.get("details_json"):
+            try:
+                item["details"] = json.loads(item["details_json"])
+            except Exception:
+                item["details"] = {}
+        logs.append(item)
+    return logs
+
+# ----------------- Emergency Alerts (Real-Time Broadcast & Synchronization) -----------------
+
+def db_create_emergency(emg_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Persists an emergency alert with idempotency and deduplication.
+    If sender is a driver linked to a fleet vehicle, marks the vehicle's is_sos = 1.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    emergency_id = emg_data.get("emergency_id") or f"EMG-{uuid.uuid4().hex[:8].upper()}"
+    
+    # Check if already exists (Idempotent / duplicate prevention)
+    cursor.execute("SELECT * FROM emergencies WHERE emergency_id = ?", (emergency_id,))
+    existing = cursor.fetchone()
+    if existing:
+        conn.close()
+        return dict(existing)
+    
+    sender_user_id = emg_data.get("sender_user_id", "")
+    sender_role = emg_data.get("sender_role", "driver")
+    sender_name = emg_data.get("sender_name", "Field Personnel")
+    emergency_type = emg_data.get("emergency_type", "Other")
+    message = emg_data.get("message", f"{emergency_type} reported at current location")
+    latitude = float(emg_data.get("latitude", 26.1445))
+    longitude = float(emg_data.get("longitude", 91.7362))
+    location_name = emg_data.get("location_name", "Field Coordinates")
+    status = emg_data.get("status", "ACTIVE")
+    created_at = emg_data.get("timestamp") or datetime.now(timezone.utc).isoformat()
+    
+    cursor.execute('''
+        INSERT INTO emergencies (
+            emergency_id, sender_user_id, sender_role, sender_name,
+            emergency_type, message, latitude, longitude,
+            location_name, status, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        emergency_id, sender_user_id, sender_role, sender_name,
+        emergency_type, message, latitude, longitude,
+        location_name, status, created_at
+    ))
+    
+    # If sender is driver, mark vehicle is_sos = 1 in fleet_vehicles
+    if sender_role in ["driver", "Driver"]:
+        cursor.execute('''
+            UPDATE fleet_vehicles
+            SET is_sos = 1, status = 'EMERGENCY_SOS', disruption_alert = ?, updated_at = ?
+            WHERE driver_id = ? OR id = ?
+        ''', (f"🚨 SOS: {emergency_type}", created_at, sender_user_id, sender_user_id))
+    
+    conn.commit()
+    conn.close()
+    
+    return {
+        "emergency_id": emergency_id,
+        "sender_user_id": sender_user_id,
+        "sender_role": sender_role,
+        "sender_name": sender_name,
+        "emergency_type": emergency_type,
+        "message": message,
+        "latitude": latitude,
+        "longitude": longitude,
+        "location_name": location_name,
+        "status": status,
+        "created_at": created_at
+    }
+
+def db_get_emergency(emergency_id: str) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM emergencies WHERE emergency_id = ?", (emergency_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def db_list_emergencies(status: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    if status:
+        cursor.execute("SELECT * FROM emergencies WHERE status = ? ORDER BY created_at DESC LIMIT ?", (status, limit))
+    else:
+        cursor.execute("SELECT * FROM emergencies ORDER BY created_at DESC LIMIT ?", (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def db_resolve_emergency(emergency_id: str, resolved_by: str = "Admin") -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM emergencies WHERE emergency_id = ?", (emergency_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return None
+    
+    resolved_at = datetime.now(timezone.utc).isoformat()
+    cursor.execute('''
+        UPDATE emergencies
+        SET status = 'RESOLVED', resolved_by = ?, resolved_at = ?
+        WHERE emergency_id = ?
+    ''', (resolved_by, resolved_at, emergency_id))
+    
+    # If associated with fleet vehicle, restore normal status
+    sender_user_id = row["sender_user_id"]
+    cursor.execute('''
+        UPDATE fleet_vehicles
+        SET is_sos = 0, status = 'EN_ROUTE', disruption_alert = NULL, updated_at = ?
+        WHERE driver_id = ? OR id = ?
+    ''', (resolved_at, sender_user_id, sender_user_id))
+    
+    conn.commit()
+    
+    cursor.execute("SELECT * FROM emergencies WHERE emergency_id = ?", (emergency_id,))
+    updated = cursor.fetchone()
+    conn.close()
+    return dict(updated) if updated else None
 
 # Initialize DB on module import
 init_db()

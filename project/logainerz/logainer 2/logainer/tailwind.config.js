@@ -8,59 +8,90 @@ export default {
   theme: {
     extend: {
       colors: {
-        ner: {
-          dark: '#0B0F19',
-          darker: '#06090E',
-          card: '#111827',
-          cardLight: '#1F2937',
-          border: 'rgba(255, 255, 255, 0.08)',
-          accent: '#06B6D4', // Cyan
-          emerald: '#10B981', // Forest / Safe
-          amber: '#F59E0B', // Warning / Advisory
-          rose: '#F43F5E', // Red Alert / Blocked
-          blue: '#3B82F6', // River / Flood
-          purple: '#8B5CF6', // AI Intelligence
-          teal: '#14B8A6'
+        canvas: '#F8F9FA', // Warm limestone / off-white app canvas
+        surface: {
+          DEFAULT: '#FFFFFF',
+          subtle: '#F8FAFC',
+          muted: '#F1F5F9',
+          border: '#E2E8F0',
+          borderStrong: '#CBD5E1'
         },
-        brand: {
+        ink: {
+          DEFAULT: '#0F172A', // Deep ink-navy
+          muted: '#475569',
+          light: '#64748B',
+          soft: '#94A3B8'
+        },
+        teal: {
+          50: '#F0FDFA',
+          100: '#CCFBF1',
+          200: '#99F6E4',
+          500: '#14B8A6',
+          600: '#0D9488',
+          700: '#0F766E', // Muted Topographic Teal primary
+          800: '#115E59',
+          900: '#134E4A'
+        },
+        brick: {
+          50: '#FEF2F2',
+          100: '#FEE2E2',
+          200: '#FECACA',
+          500: '#EF4444',
+          600: '#DC2626', // Brick Red critical / blocked
+          700: '#B91C1C',
+          800: '#991B1B'
+        },
+        ochre: {
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          500: '#F59E0B',
+          600: '#D97706', // Ochre warning / deficit
+          700: '#B45309',
+          800: '#92400E'
+        },
+        moss: {
           50: '#F0FDF4',
           100: '#DCFCE7',
+          200: '#BBF7D0',
           500: '#22C55E',
           600: '#16A34A',
-          700: '#15803D',
-          900: '#14532D',
+          700: '#15803D', // Moss Green safe / operational
+          800: '#166534'
+        },
+        whatif: {
+          50: '#F5F3FF',
+          100: '#EDE9FE',
+          200: '#DDD6FE',
+          500: '#8B5CF6',
+          600: '#7C3AED', // Muted Violet reserved for What-If intelligence
+          700: '#6D28D9',
+          800: '#5B21B6'
+        },
+        ner: {
+          dark: '#F8F9FA',
+          darker: '#F1F5F9',
+          card: '#FFFFFF',
+          cardLight: '#F8FAFC',
+          border: '#E2E8F0',
+          accent: '#0F766E',
+          emerald: '#15803D',
+          amber: '#D97706',
+          rose: '#DC2626',
+          blue: '#0284C7',
+          purple: '#7C3AED',
+          teal: '#0F766E'
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
-      },
-      animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'radar': 'radarSweep 4s linear infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'ping-slow': 'ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite'
-      },
-      keyframes: {
-        radarSweep: {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' }
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-6px)' }
-        }
+        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'Fira Code', 'monospace']
       },
       boxShadow: {
-        'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.4)',
-        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.4)',
-        'glow-rose': '0 0 25px -5px rgba(244, 63, 94, 0.4)',
-        'glow-amber': '0 0 25px -5px rgba(245, 158, 11, 0.4)',
-        'glow-purple': '0 0 25px -5px rgba(139, 92, 246, 0.4)',
-        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
-      },
-      backdropBlur: {
-        'xs': '2px'
+        'card': '0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06)',
+        'card-hover': '0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.06)',
+        'modal': '0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1)',
+        'floating': '0 4px 12px 0 rgba(15, 23, 42, 0.08)'
       }
     },
   },

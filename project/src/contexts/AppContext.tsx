@@ -6,8 +6,8 @@ import type { User, Session } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { getCurrentPosition, watchPosition, clearWatch, geolocationErrorMessage } from '../lib/location';
 import type { LangCode } from '../lib/i18n';
-import { cancelSpeech } from '../lib/speech';
-import { trips as demoTripsData, disasterMarkers as demoMarkersData } from '../types';
+import { cancelSpeech, speakEmergencyAlert, getRateForSetting } from '../lib/speech';
+import { disasterMarkers as demoMarkersData } from '../types';
 import type { Role, CitizenSubmission } from '../types';
 import { checkProximityToHazards, haversineDistance } from '../lib/routing';
 import {
@@ -175,6 +175,8 @@ interface AppContextValue {
 
   // Emergency
   submitEmergency: (type: string) => Promise<{ error: string | null; locationName: string }>;
+  incomingEmergency: any | null;
+  dismissIncomingEmergency: () => void;
 
   // Security PIN (officers)
   verifyPin: (pin: string) => Promise<boolean>;
@@ -233,6 +235,23 @@ function saveOfflineQueue(queue: OfflineQueueEntry[]) {
   localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
 }
 
+const LOCAL_TRIP_STATUS_KEY = 'smartlog_local_trip_statuses';
+
+function getLocalTripStatuses(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(LOCAL_TRIP_STATUS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function setLocalTripStatus(tripId: string, status: string) {
+  try {
+    const map = getLocalTripStatuses();
+    map[tripId] = status;
+    localStorage.setItem(LOCAL_TRIP_STATUS_KEY, JSON.stringify(map));
+  } catch {}
+}
+
 // ============================================================
 // Context
 // ============================================================
@@ -267,6 +286,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [nearbyHazards, setNearbyHazards] = useState<AppIncident[]>([]);
   const [alertedHazardIds, setAlertedHazardIds] = useState<Set<string>>(new Set());
   const [offlineQueue, setOfflineQueue] = useState<OfflineQueueEntry[]>(loadOfflineQueue());
+  const [incomingEmergency, setIncomingEmergency] = useState<any | null>(null);
+  const dismissIncomingEmergency = useCallback(() => setIncomingEmergency(null), []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const activeTrip = trips.find((t) => ['accepted', 'going_to_pickup', 'arrived_at_pickup', 'package_loaded', 'in_transit', 'arrived_at_destination', 'in_progress', 'en_route'].includes(t.status?.toLowerCase())) || null;
@@ -323,10 +344,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // ============================================================
   const login = useCallback(async (email: string, password: string, _role: Role): Promise<{ error: string | null }> => {
     if (!isSupabaseConfigured) {
+      let driverId = 'DRV-102';
+      let driverName = 'Tenzing Norbu';
+      const cleanEmail = email.toLowerCase().trim();
+      if (cleanEmail.includes('105') || cleanEmail.includes('rajesh') || cleanEmail.includes('gogoi')) {
+        driverId = 'DRV-105';
+        driverName = 'Rajesh Gogoi';
+      } else if (cleanEmail.includes('108') || cleanEmail.includes('lalthan')) {
+        driverId = 'DRV-108';
+        driverName = 'Lalthanzama';
+      } else if (cleanEmail.includes('112') || cleanEmail.includes('bikash')) {
+        driverId = 'DRV-112';
+        driverName = 'Bikash Debbarma';
+      }
+
       const demoProfile: UserProfile = {
-        id: 'demo-' + _role,
+        id: _role === 'driver' ? driverId : 'demo-' + _role,
         role: _role,
-        full_name: _role === 'driver' ? 'Rajesh Kumar' : _role === 'officer' ? 'Aarav Mehta' : 'Priya Sharma',
+        full_name: _role === 'driver' ? driverName : _role === 'officer' ? 'Aarav Mehta' : 'Priya Sharma',
         phone: '+91 98765 43210',
         email,
         avatar_url: null,
@@ -336,11 +371,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         report_count: _role === 'officer' ? 28 : 0,
         on_time_pct: 98,
         profile_completion: 85,
-        employee_id: _role === 'officer' ? 'FO-10842' : undefined,
+        employee_id: _role === 'driver' ? driverId : _role === 'officer' ? 'FO-10842' : undefined,
         department: _role === 'officer' ? 'Disaster Management' : undefined,
       };
       setProfile(demoProfile);
-      setUser({ id: 'demo-' + _role, email } as User);
+      setUser({ id: _role === 'driver' ? driverId : 'demo-' + _role, email } as User);
       return { error: null };
     }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -538,18 +573,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Retry offline queue when back online
   useEffect(() => {
     const processQueue = async () => {
-      if (!navigator.onLine || !isSupabaseConfigured || offlineQueue.length === 0) return;
+      if (!navigator.onLine || offlineQueue.length === 0) return;
       const processed: string[] = [];
       for (const entry of offlineQueue) {
         try {
           if (entry.type === 'emergency') {
-            await supabase.from('emergencies').insert(entry.payload);
+            try {
+              await fetch('http://127.0.0.1:8000/api/v1/emergencies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entry.payload),
+              });
+            } catch (err) {
+              console.warn('Backend sync failed, will retry later:', err);
+            }
+            if (isSupabaseConfigured) {
+              await supabase.from('emergencies').insert(entry.payload);
+            }
             processed.push(entry.id);
           } else if (entry.type === 'incident') {
-            await supabase.from('incidents').insert(entry.payload);
+            if (isSupabaseConfigured) {
+              await supabase.from('incidents').insert(entry.payload);
+            }
             processed.push(entry.id);
           } else if (entry.type === 'citizen_submission') {
-            await supabase.from('citizen_submissions').insert(entry.payload);
+            if (isSupabaseConfigured) {
+              await supabase.from('citizen_submissions').insert(entry.payload);
+            }
             processed.push(entry.id);
           }
         } catch { /* keep in queue */ }
@@ -614,15 +664,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Trips
   // ============================================================
   const refreshTrips = useCallback(async () => {
-    setTripsLoading(true);
+    const localStatuses = getLocalTripStatuses();
     try {
-      const driverId = user?.id || 'DRV-102';
+      const driverId = (profile?.role === 'driver' ? (profile.employee_id || profile.id) : null) || user?.id || 'DRV-102';
       const backendTrips = await fetchDriverTrips(driverId);
-      if (backendTrips && backendTrips.length > 0) {
+      if (Array.isArray(backendTrips)) {
         const mappedTrips: AppTrip[] = backendTrips.map((b) => {
           let st = (b.status || 'available').toLowerCase();
           if (st === 'assigned') st = 'available';
           if (st === 'en_route') st = 'in_transit';
+
+          const tid = b.trip_id || b.trip_code;
+          if (localStatuses[tid] || localStatuses[b.trip_id] || localStatuses[b.trip_code]) {
+            st = localStatuses[tid] || localStatuses[b.trip_id] || localStatuses[b.trip_code];
+          }
 
           const origName = b.origin_name || 'Guwahati Hub';
           const destName = b.destination_name || 'Shillong Hub';
@@ -665,42 +720,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return;
       }
     } catch (err) {
-      console.warn('[AppContext] Failed to load from backend, fallback to demo/supabase:', err);
+      console.warn('[AppContext] Failed to load from backend:', err);
     }
 
-    if (!isSupabaseConfigured) {
-      setTrips(demoTripsData.map((t) => ({
-        id: t.id,
-        trip_code: t.id,
-        product: t.product,
-        quantity: t.quantity,
-        pickup_location: t.pickup,
-        drop_location: t.drop,
-        pickup_lat: t.pickup_lat ?? 26.1445,
-        pickup_lng: t.pickup_lng ?? 91.7362,
-        drop_lat: t.drop_lat ?? 25.5788,
-        drop_lng: t.drop_lng ?? 91.8933,
-        distance_km: parseFloat(t.distance),
-        duration_mins: 0,
-        capacity: t.capacity,
-        priority: t.priority,
-        status: 'available',
-        driver_id: null,
-        instructions: t.instructions || null,
-        road_condition: t.roadCondition || null,
-        accepted_at: null,
-      })));
-      setTripsLoading(false);
-      return;
+    if (isSupabaseConfigured && user) {
+      try {
+        const { data, error } = await supabase
+          .from('trips')
+          .select('*')
+          .or(`status.eq.available,driver_id.eq.${user?.id}`)
+          .order('created_at', { ascending: false });
+        if (!error && data) {
+          const mapped = (data as AppTrip[]).map((t) => ({
+            ...t,
+            status: localStatuses[t.id] || t.status
+          }));
+          setTrips(mapped);
+          setTripsLoading(false);
+          return;
+        }
+      } catch {}
     }
-    const { data, error } = await supabase
-      .from('trips')
-      .select('*')
-      .or(`status.eq.available,driver_id.eq.${user?.id}`)
-      .order('created_at', { ascending: false });
-    if (!error && data) setTrips(data as AppTrip[]);
+
+    // Default to empty array when no trips assigned (no sample fallback)
+    setTrips([]);
     setTripsLoading(false);
-  }, [user]);
+    setTripsLoading(false);
+  }, [user, profile]);
 
   useEffect(() => {
     refreshTrips();
@@ -711,44 +757,45 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [refreshTrips]);
 
   const acceptTrip = useCallback(async (tripId: string): Promise<{ success: boolean; error: string | null }> => {
-    const driverId = user?.id || (profile?.role === 'driver' ? profile.id : 'DRV-102');
+    const driverId = (profile?.role === 'driver' ? (profile.employee_id || profile.id) : null) || user?.id || 'DRV-102';
+    setLocalTripStatus(tripId, 'accepted');
     
     // Call backend API
-    const res = await acceptTripBackend(tripId, driverId, location.lat || undefined, location.lng || undefined);
-    if (res.success) {
-      setTrips((ts) => ts.map((t) => (t.id === tripId || t.trip_code === tripId) ? { ...t, status: 'accepted', driver_id: driverId, accepted_at: new Date().toISOString() } : t));
-      addNotification({ category: 'trip', title: 'Trip Accepted', body: `You have accepted Trip #${tripId}.`, priority: 'normal' });
-      await refreshTrips();
-      return { success: true, error: null };
-    }
-
-    if (isSupabaseConfigured && user) {
-      const { data, error } = await supabase.rpc('accept_trip', { trip_id: tripId, driver_uuid: user.id });
-      if (error) return { success: false, error: error.message };
-      if (!data) return { success: false, error: 'Trip was already accepted by another driver.' };
-      await refreshTrips();
-      addNotification({ category: 'trip', title: 'Trip Accepted', body: `You have accepted a new trip.`, priority: 'normal' });
-      return { success: true, error: null };
-    }
+    try {
+      await acceptTripBackend(tripId, driverId, location.lat || undefined, location.lng || undefined);
+    } catch {}
 
     setTrips((ts) => ts.map((t) => (t.id === tripId || t.trip_code === tripId) ? { ...t, status: 'accepted', driver_id: driverId, accepted_at: new Date().toISOString() } : t));
     addNotification({ category: 'trip', title: 'Trip Accepted', body: `You have accepted Trip #${tripId}.`, priority: 'normal' });
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.rpc('accept_trip', { trip_id: tripId, driver_uuid: user.id });
+      } catch {}
+    }
+
+    await refreshTrips();
     return { success: true, error: null };
   }, [user, profile, location, addNotification, refreshTrips]);
 
   const updateTripStatus = useCallback(async (tripId: string, status: string): Promise<{ error: string | null }> => {
-    setTrips((ts) => ts.map((t) => t.id === tripId ? { ...t, status } : t));
+    setLocalTripStatus(tripId, status);
+    setTrips((ts) => ts.map((t) => (t.id === tripId || t.trip_code === tripId) ? { ...t, status } : t));
     if (!isSupabaseConfigured) return { error: null };
-    const { error } = await supabase.from('trips').update({ status, updated_at: new Date().toISOString() }).eq('id', tripId);
-    if (error) return { error: error.message };
+    try {
+      await supabase.from('trips').update({ status, updated_at: new Date().toISOString() }).eq('id', tripId);
+    } catch {}
     return { error: null };
   }, []);
 
   const startTrip = useCallback(async (tripId: string): Promise<{ success: boolean; error: string | null }> => {
     const driverId = user?.id || (profile?.role === 'driver' ? profile.id : 'DRV-102');
-    const res = await startTripBackend(tripId, driverId, location.lat || undefined, location.lng || undefined);
+    setLocalTripStatus(tripId, 'in_transit');
+    try {
+      await startTripBackend(tripId, driverId, location.lat || undefined, location.lng || undefined);
+    } catch {}
     setTrips((ts) => ts.map((t) => (t.id === tripId || t.trip_code === tripId) ? { ...t, status: 'in_transit' } : t));
-    return { success: res.success, error: res.error || null };
+    return { success: true, error: null };
   }, [user, profile, location]);
 
   const updateTripLocation = useCallback((tripId: string, lat: number, lng: number, speed = 40, progress = 0) => {
@@ -758,32 +805,49 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const finishTrip = useCallback(async (tripId: string): Promise<{ error: string | null }> => {
     const driverId = user?.id || (profile?.role === 'driver' ? profile.id : 'DRV-102');
     
-    // Call backend API
-    const res = await completeTripBackend(tripId, driverId);
+    // 1. Immediately persist completed status locally
+    setLocalTripStatus(tripId, 'completed');
     
-    // Optimistic / local state update
+    // 2. Call backend API for central database / dispatcher synchronization
+    try {
+      await completeTripBackend(tripId, driverId);
+    } catch (apiErr) {
+      console.warn('[AppContext] completeTripBackend error (continuing local completion):', apiErr);
+    }
+    
+    // 3. Optimistic local state update
     setTrips((ts) => ts.map((t) => (t.id === tripId || t.trip_code === tripId) ? { ...t, status: 'completed' } : t));
+    
+    // 4. Update profile stats
+    if (profile) {
+      setProfile((p) => p ? { ...p, trip_count: (p.trip_count || 0) + 1 } : p);
+    }
+
+    // 5. Notify Driver
     addNotification({
       category: 'trip',
-      title: 'Trip Completed',
-      body: `Trip #${tripId} has been successfully completed.`,
+      title: '🎉 Delivery Completed',
+      body: `Trip #${tripId} has been successfully recorded as completed. Safe return!`,
       priority: 'normal',
     });
 
+    // 6. Supabase sync if enabled
     if (isSupabaseConfigured && user) {
-      await supabase
-        .from('trips')
-        .update({
-          status: 'completed',
-          completed_at: new Date().toISOString(),
-          completed_by: user.id,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', tripId);
+      try {
+        await supabase
+          .from('trips')
+          .update({
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            completed_by: user.id,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', tripId);
+      } catch {}
     }
 
     await refreshTrips();
-    return { error: res.error || null };
+    return { error: null };
   }, [user, profile, addNotification, refreshTrips]);
 
   useEffect(() => {
@@ -919,47 +983,140 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => { supabase.removeChannel(sub); };
   }, [addNotification, profile?.role, location.lat, location.lng]);
 
+  // Realtime WebSocket subscription for cross-platform Emergency Broadcasts
+  useEffect(() => {
+    let ws: WebSocket | null = null;
+    let reconnectTimer: any = null;
+
+    const connectWS = () => {
+      try {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.hostname || '127.0.0.1';
+        ws = new WebSocket(`${protocol}//${host}:8000/ws/telemetry`);
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'EMERGENCY_BROADCAST') {
+              const emg = data.emergency;
+              if (!emg) return;
+
+              // 1. Do not duplicate notification back to the sender
+              if (emg.sender_user_id === user?.id) return;
+
+              // 2. Add Critical Alert to recipient's notification list
+              addNotification({
+                category: 'emergency',
+                title: `🚨 EMERGENCY ALERT: ${emg.emergency_type}`,
+                body: `${emg.message || emg.emergency_type} near ${emg.location_name || `${emg.latitude?.toFixed(2)}°N, ${emg.longitude?.toFixed(2)}°E`} (Reported by ${emg.sender_name || emg.sender_role})`,
+                priority: 'critical'
+              });
+
+              // 3. Play localized voice alert on receiving Driver / Officer device in their selected language!
+              const rate = getRateForSetting(speechSpeed);
+              speakEmergencyAlert(emg.emergency_type, emg.location_name || 'your area', language, rate);
+
+              // 4. Trigger incoming emergency modal/banner for driver
+              setIncomingEmergency(emg);
+            }
+          } catch (e) {
+            console.error('Error handling incoming WS emergency:', e);
+          }
+        };
+
+        ws.onclose = () => {
+          reconnectTimer = setTimeout(connectWS, 4000);
+        };
+        ws.onerror = () => {
+          ws?.close();
+        };
+      } catch {
+        reconnectTimer = setTimeout(connectWS, 5000);
+      }
+    };
+
+    connectWS();
+    return () => {
+      if (ws) ws.close();
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+    };
+  }, [user?.id, language, speechSpeed, addNotification]);
+
   // ============================================================
-  // Emergency
+  // Emergency Broadcast Pipeline
   // ============================================================
   const submitEmergency = useCallback(async (type: string): Promise<{ error: string | null; locationName: string }> => {
     let locationName = 'Your current location';
-    const lat = location.lat;
-    const lng = location.lng;
+    const lat = location.lat || 26.1445;
+    const lng = location.lng || 91.7362;
 
-    if (lat && lng) {
+    if (location.lat && location.lng) {
       try {
         const { reverseGeocode } = await import('../lib/geocoding');
-        const geo = await reverseGeocode(lat, lng);
+        const geo = await reverseGeocode(location.lat, location.lng);
         locationName = geo.shortName;
       } catch { /* fallback */ }
+    } else {
+      locationName = 'Guwahati - Dispur Corridor (GPS)';
     }
 
+    const emgId = `EMG-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const payload = {
-      type,
-      lat,
-      lng,
+      emergency_id: emgId,
+      sender_user_id: user?.id || (profile?.role === 'officer' ? 'FO-10842' : 'DRV-101'),
+      sender_role: profile?.role || 'driver',
+      sender_name: profile?.full_name || (profile?.role === 'officer' ? 'Field Officer' : 'Driver'),
+      emergency_type: type,
+      message: `🚨 ${type} reported near ${locationName}. Operations desk and all nearby drivers notified.`,
+      latitude: lat,
+      longitude: lng,
       location_name: locationName,
-      reported_by: user?.id,
-      reporter_role: profile?.role,
-      reporter_name: profile?.full_name,
+      status: 'ACTIVE',
+      timestamp: new Date().toISOString(),
     };
 
-    if (!isSupabaseConfigured) {
-      addNotification({ category: 'emergency', title: `Emergency: ${type}`, body: `${type} reported at ${locationName}. Operations desk notified.`, priority: 'critical' });
-      return { error: null, locationName };
-    }
-
+    // If offline, store in local queue for auto-sync when network returns
     if (!navigator.onLine) {
       addToOfflineQueue({ type: 'emergency', payload });
-      addNotification({ category: 'emergency', title: `Emergency Queued: ${type}`, body: 'No connection. Emergency will be transmitted when online.', priority: 'critical' });
+      addNotification({
+        category: 'emergency',
+        title: `Emergency Queued: ${type}`,
+        body: 'No network connection. Emergency will be broadcast to Admin & Drivers immediately when online.',
+        priority: 'critical'
+      });
       return { error: null, locationName };
     }
 
-    const { error } = await supabase.from('emergencies').insert(payload);
-    if (error) return { error: error.message, locationName };
+    // Online: Submit to FastAPI backend for instant WebSocket broadcast
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/v1/emergencies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+    } catch (apiErr) {
+      console.warn('Backend emergency broadcast failed, saving to offline queue:', apiErr);
+      addToOfflineQueue({ type: 'emergency', payload });
+    }
 
-    addNotification({ category: 'emergency', title: `Emergency: ${type}`, body: `${type} reported at ${locationName}. Operations desk notified.`, priority: 'critical' });
+    // Also sync to Supabase if configured
+    if (isSupabaseConfigured) {
+      try {
+        await supabase.from('emergencies').insert(payload);
+      } catch {}
+    }
+
+    // Local sender notification confirmation
+    addNotification({
+      category: 'emergency',
+      title: `🚨 Emergency Alert Dispatched: ${type}`,
+      body: `${type} reported at ${locationName}. Operations desk and all active drivers notified.`,
+      priority: 'critical'
+    });
+
     return { error: null, locationName };
   }, [location, user, profile, addNotification, addToOfflineQueue]);
 
@@ -1106,7 +1263,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     notifications, unreadCount, markRead, markAllRead, addNotification,
     trips, tripsLoading, activeTrip, refreshTrips, acceptTrip, startTrip, updateTripLocation, updateTripStatus, finishTrip,
     incidents, incidentsLoading, refreshIncidents, submitIncident,
-    submitEmergency,
+    submitEmergency, incomingEmergency, dismissIncomingEmergency,
     verifyPin, setPin, pinSet,
     saveVehicle, vehicleData, hasRequiredVehicle,
     citizenSubmissions, citizenSubmissionsLoading, refreshCitizenSubmissions, submitCitizenMedia,

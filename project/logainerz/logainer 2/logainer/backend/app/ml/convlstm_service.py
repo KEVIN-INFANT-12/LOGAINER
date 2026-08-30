@@ -16,12 +16,18 @@ from typing import Dict, Any, List, Optional, Tuple
 
 # Robust search for NERAI directory
 possible_nerai_dirs = [
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))), "project", "NERAI", "NERAI"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))), "project", "NERAI"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))), "NERAI", "NERAI"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))), "NERAI"),
+    r"d:\Downloads\ZentroSIH\project\NERAI\NERAI",
+    r"d:\Downloads\ZentroSIH\project\NERAI",
+    r"d:\Downloads\ZentroSIH\project\logainerz\logainer 2\NERAI",
     os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "NERAI"),
     os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "NERAI"),
-    "/Users/mohammeddhariqib/Downloads/logainer 2/NERAI"
 ]
 
-NERAI_DIR = next((d for d in possible_nerai_dirs if os.path.exists(d)), possible_nerai_dirs[0])
+NERAI_DIR = next((d for d in possible_nerai_dirs if os.path.exists(os.path.join(d, "outputs", "model", "convlstm_model.keras"))), next((d for d in possible_nerai_dirs if os.path.exists(d)), possible_nerai_dirs[0]))
 MODEL_KERAS_PATH = os.path.join(NERAI_DIR, "outputs", "model", "convlstm_model.keras")
 METADATA_PATH = os.path.join(NERAI_DIR, "outputs", "model_metadata.json")
 NORM_STATS_PATH = os.path.join(NERAI_DIR, "outputs", "normalization_stats.json")

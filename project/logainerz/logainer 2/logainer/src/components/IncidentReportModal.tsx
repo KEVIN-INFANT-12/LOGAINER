@@ -5,13 +5,9 @@ import {
   Camera, 
   Video,
   AlertTriangle, 
-  CheckCircle, 
   Upload, 
   WifiOff, 
-  Radio,
-  FileText,
-  Trash2,
-  Image as ImageIcon
+  Trash2
 } from 'lucide-react';
 import { useLogistics } from '../context/LogisticsContext';
 import { useAuth } from '../context/AuthContext';
@@ -114,31 +110,31 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
-      <div className="w-full max-w-xl rounded-2xl glass-panel-glow p-6 shadow-2xl border border-cyan-500/30 space-y-5 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in">
+      <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-modal border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-start justify-between pb-3 border-b border-white/10">
+        <div className="flex items-start justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
-              <AlertTriangle className="w-6 h-6" />
+            <div className="p-2 rounded-lg bg-red-50 text-red-700 border border-red-200">
+              <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Upload Field Incident / Obstruction Report</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-base font-bold text-slate-900">Upload Field Incident / Obstruction Report</h3>
+              <p className="text-xs text-slate-500">
                 Geo-tagged report for road blockages, landslides, floods & bridge damages across NER
               </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Offline Badge */}
         {!isOnline && (
-          <div className="p-3 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs flex items-center space-x-2">
-            <WifiOff className="w-4 h-4 shrink-0" />
+          <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center space-x-2">
+            <WifiOff className="w-4 h-4 shrink-0 text-amber-700" />
             <span>Zero Connectivity Zone: Incident + Media Blobs will be stored in IndexedDB (PENDING_UPLOAD) and auto-sync when online.</span>
           </div>
         )}
@@ -146,24 +142,24 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Incident Headline / Corridor Name</label>
+            <label className="block font-semibold text-slate-700 mb-1">Incident Headline / Corridor Name</label>
             <input
               type="text"
               required
               placeholder="e.g. Sonapur Tunnel Mudflow & Debris Overflow"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:border-teal-700"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">Obstruction Category</label>
+              <label className="block font-semibold text-slate-700 mb-1">Obstruction Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as any)}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white focus:outline-none focus:border-cyan-500"
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:border-teal-700"
               >
                 <option value="LANDSLIDE">Massive Landslide</option>
                 <option value="FLASH_FLOOD">Flash Flood / River Swelling</option>
@@ -176,11 +172,11 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">Severity & Road Impact</label>
+              <label className="block font-semibold text-slate-700 mb-1">Severity & Road Impact</label>
               <select
                 value={severity}
                 onChange={(e) => setSeverity(e.target.value as any)}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white focus:outline-none focus:border-cyan-500"
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:border-teal-700"
               >
                 <option value="CRITICAL_BLOCKED">Critical - Both Lanes Blocked (Total Stop)</option>
                 <option value="HIGH">High - Single Lane Slippery / Crawling</option>
@@ -192,11 +188,11 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">State</label>
+              <label className="block font-semibold text-slate-700 mb-1">State</label>
               <select
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white focus:outline-none focus:border-cyan-500"
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:border-teal-700"
               >
                 <option value="Assam">Assam</option>
                 <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -210,28 +206,28 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">District / Hill Area</label>
+              <label className="block font-semibold text-slate-700 mb-1">District / Hill Area</label>
               <input
                 type="text"
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white focus:outline-none focus:border-cyan-500"
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:border-teal-700"
               />
             </div>
           </div>
 
           {/* GPS Coordinates */}
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
+          <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-slate-300 flex items-center space-x-1">
-                <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="font-semibold text-slate-700 flex items-center space-x-1">
+                <MapPin className="w-3.5 h-3.5 text-teal-700" />
                 <span>Geo-Tagged Location Coordinates</span>
               </span>
               <button
                 type="button"
                 onClick={handleGetCurrentLocation}
                 disabled={isLocating}
-                className="px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-mono text-[10px] border border-cyan-500/30"
+                className="px-2.5 py-1 rounded-md bg-teal-50 text-teal-800 font-semibold text-[11px] border border-teal-200 hover:bg-teal-100"
               >
                 {isLocating ? 'Acquiring GPS...' : '📍 Auto-Detect GPS'}
               </button>
@@ -239,23 +235,23 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
 
             <div className="grid grid-cols-2 gap-3 font-mono">
               <div>
-                <label className="text-[10px] text-slate-400">Latitude</label>
+                <label className="text-[10px] text-slate-500">Latitude</label>
                 <input
                   type="number"
                   step="0.00001"
                   value={lat}
                   onChange={(e) => setLat(parseFloat(e.target.value))}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-white/10 text-white text-xs"
+                  className="w-full px-2.5 py-1.5 rounded-md bg-white border border-slate-300 text-slate-900 text-xs"
                 />
               </div>
               <div>
-                <label className="text-[10px] text-slate-400">Longitude</label>
+                <label className="text-[10px] text-slate-500">Longitude</label>
                 <input
                   type="number"
                   step="0.00001"
                   value={lng}
                   onChange={(e) => setLng(parseFloat(e.target.value))}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-white/10 text-white text-xs"
+                  className="w-full px-2.5 py-1.5 rounded-md bg-white border border-slate-300 text-slate-900 text-xs"
                 />
               </div>
             </div>
@@ -263,24 +259,24 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
 
           {/* Description */}
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Field Description & Clearance Assessment</label>
+            <label className="block font-semibold text-slate-700 mb-1">Field Description & Clearance Assessment</label>
             <textarea
               rows={3}
               required
               placeholder="Provide exact km mark, estimated debris volume, stranded vehicle count, and nearest safe turn-around point..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:border-teal-700"
             />
           </div>
 
           {/* Passable by */}
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Immediate Passability Status</label>
+            <label className="block font-semibold text-slate-700 mb-1">Immediate Passability Status</label>
             <select
               value={passableBy}
               onChange={(e) => setPassableBy(e.target.value as any)}
-              className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:border-teal-700"
             >
               <option value="NONE">Completely Impassable (All Traffic Stopped)</option>
               <option value="4X4_ONLY">4x4 / Heavy Off-Road Trucks Only</option>
@@ -289,10 +285,10 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
             </select>
           </div>
 
-          {/* Photo & Video Binary Attachments (IndexedDB Blob Storage) */}
+          {/* Media Attachments */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="block font-semibold text-slate-300">Evidence Media (Stored as Blobs in IndexedDB)</label>
+              <label className="block font-semibold text-slate-700">Evidence Media (Stored in IndexedDB)</label>
               <div className="flex items-center space-x-2">
                 <input 
                   type="file" 
@@ -304,7 +300,7 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 text-[11px] font-semibold border border-cyan-500/30 flex items-center space-x-1 hover:bg-cyan-500/30"
+                  className="px-2.5 py-1 rounded-md bg-teal-50 text-teal-800 text-[11px] font-semibold border border-teal-200 flex items-center space-x-1 hover:bg-teal-100"
                 >
                   <Camera className="w-3.5 h-3.5" />
                   <span>Attach Photo</span>
@@ -320,7 +316,7 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
                 <button
                   type="button"
                   onClick={() => videoInputRef.current?.click()}
-                  className="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 text-[11px] font-semibold border border-purple-500/30 flex items-center space-x-1 hover:bg-purple-500/30"
+                  className="px-2.5 py-1 rounded-md bg-purple-50 text-purple-800 text-[11px] font-semibold border border-purple-200 flex items-center space-x-1 hover:bg-purple-100"
                 >
                   <Video className="w-3.5 h-3.5" />
                   <span>Attach Video</span>
@@ -328,26 +324,26 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
               </div>
             </div>
 
-            {/* Attached media preview pills */}
+            {/* Media previews */}
             {mediaFiles.length > 0 ? (
-              <div className="grid grid-cols-2 gap-2 p-2 rounded-xl bg-slate-900/60 border border-white/10">
+              <div className="grid grid-cols-2 gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
                 {mediaFiles.map((m, idx) => (
-                  <div key={idx} className="relative flex items-center space-x-2 p-2 rounded-lg bg-slate-950 border border-white/10 group">
+                  <div key={idx} className="relative flex items-center space-x-2 p-2 rounded-md bg-white border border-slate-200 shadow-sm">
                     {m.type === 'PHOTO' ? (
                       <img src={m.previewUrl} alt={m.name} className="w-12 h-10 object-cover rounded" />
                     ) : (
-                      <div className="w-12 h-10 rounded bg-purple-900/50 flex items-center justify-center text-purple-300">
+                      <div className="w-12 h-10 rounded bg-purple-50 flex items-center justify-center text-purple-700">
                         <Video className="w-5 h-5" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0 text-[10px]">
-                      <div className="font-bold text-white truncate">{m.name}</div>
-                      <div className="text-slate-400 font-mono">{(m.file.size / 1024).toFixed(1)} KB ({m.type})</div>
+                      <div className="font-bold text-slate-900 truncate">{m.name}</div>
+                      <div className="text-slate-500 font-mono">{(m.file.size / 1024).toFixed(1)} KB ({m.type})</div>
                     </div>
                     <button
                       type="button"
                       onClick={() => removeMedia(idx)}
-                      className="text-slate-500 hover:text-rose-400 p-1"
+                      className="text-slate-400 hover:text-red-600 p-1"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -355,28 +351,28 @@ export const IncidentReportModal: React.FC<IncidentReportModalProps> = ({ isOpen
                 ))}
               </div>
             ) : (
-              <div className="flex items-center space-x-3 p-3 rounded-xl bg-slate-900/60 border border-white/10">
-                <img src={photoUrl} alt="Default Snapshot" className="w-16 h-12 object-cover rounded-lg border border-white/10" />
-                <div className="text-[11px] text-slate-400">
+              <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <img src={photoUrl} alt="Default Snapshot" className="w-16 h-12 object-cover rounded-md border border-slate-200" />
+                <div className="text-[11px] text-slate-500">
                   <div>Default terrain reference attached. Add live photos or video clips above.</div>
-                  <div className="text-[10px] text-cyan-400 font-mono">IndexedDB Blob Engine: Active</div>
+                  <div className="text-[10px] text-teal-700 font-medium">IndexedDB Blob Engine: Ready</div>
                 </div>
               </div>
             )}
           </div>
 
           {/* Submit */}
-          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-white/10">
+          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs font-semibold"
+              className="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 text-xs font-semibold"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-glow-cyan flex items-center space-x-1.5 transition-all"
+              className="px-5 py-2.5 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs shadow-sm flex items-center space-x-1.5 transition-all"
             >
               <Upload className="w-4 h-4" />
               <span>{isOnline ? 'Broadcast Incident Alert' : 'Save Offline Report (IndexedDB)'}</span>

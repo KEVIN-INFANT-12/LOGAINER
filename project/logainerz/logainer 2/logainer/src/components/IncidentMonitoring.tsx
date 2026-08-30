@@ -1,25 +1,18 @@
 import React, { useState } from 'react';
 import { 
   AlertOctagon, 
-  ThumbsUp, 
   ShieldCheck, 
   Clock, 
   MapPin, 
-  Filter, 
-  RefreshCw, 
   CheckCircle, 
   Award, 
   AlertTriangle, 
   XCircle, 
-  Search,
-  Sparkles,
-  Camera,
-  Layers
+  Search
 } from 'lucide-react';
 import { useLogistics } from '../context/LogisticsContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { Incident } from '../types';
 import { api } from '../services/api';
 
 export const IncidentMonitoring: React.FC = () => {
@@ -50,99 +43,123 @@ export const IncidentMonitoring: React.FC = () => {
   const handleVerifyOfficial = async (id: string) => {
     try {
       await api.verifyIncident(id, 'VERIFIED_OFFICIAL');
-      addToast('SUCCESS', 'Incident Verified & Approved', 'Report verified with official government standing.');
+      addToast({
+        title: 'Incident Verified & Approved',
+        message: 'Report verified with official government standing.',
+        type: 'success'
+      });
       refreshAllData();
     } catch {
-      addToast('INFO', 'Verification Updated', 'Status logged locally.');
+      addToast({
+        title: 'Verification Updated',
+        message: 'Status logged locally.',
+        type: 'info'
+      });
     }
   };
 
   const handleRejectIncident = async (id: string) => {
     try {
       await api.verifyIncident(id, 'REJECTED');
-      addToast('WARNING', 'Incident Rejected / Flagged', 'Erroneous/unverified incident marked as invalid.');
+      addToast({
+        title: 'Incident Rejected / Flagged',
+        message: 'Erroneous/unverified incident marked as invalid.',
+        type: 'warning'
+      });
       refreshAllData();
     } catch {
-      addToast('INFO', 'Status Updated', 'Report flagged as rejected.');
+      addToast({
+        title: 'Status Updated',
+        message: 'Report flagged as rejected.',
+        type: 'info'
+      });
     }
   };
 
   const handleResolveIncident = async (id: string) => {
     try {
       await api.verifyIncident(id, 'RESOLVED');
-      addToast('SUCCESS', 'Incident Marked Resolved', 'Clearance operations confirmed. Road corridor returned to green status.');
+      addToast({
+        title: 'Incident Marked Resolved',
+        message: 'Clearance operations confirmed. Road corridor restored.',
+        type: 'success'
+      });
       refreshAllData();
     } catch {
-      addToast('INFO', 'Resolution Updated', 'Incident marked resolved.');
+      addToast({
+        title: 'Resolution Updated',
+        message: 'Incident marked resolved.',
+        type: 'info'
+      });
     }
   };
 
   const getTrustBadge = (trustLevel?: string, score?: number, verificationStatus?: string) => {
     if (verificationStatus === 'REJECTED') {
-      return { label: 'REJECTED / INVALID', color: 'bg-rose-500/20 text-rose-300 border-rose-500/40', icon: XCircle };
+      return { label: 'REJECTED / INVALID', color: 'bg-red-50 text-red-700 border-red-200', icon: XCircle };
     }
     if (verificationStatus === 'RESOLVED') {
-      return { label: 'RESOLVED & CLEARED', color: 'bg-teal-500/20 text-teal-300 border-teal-500/40', icon: CheckCircle };
+      return { label: 'RESOLVED & CLEARED', color: 'bg-teal-50 text-teal-800 border-teal-200', icon: CheckCircle };
     }
     if (verificationStatus === 'VERIFIED_OFFICIAL' || trustLevel === 'OFFICIALLY VERIFIED' || (score && score >= 90)) {
-      return { label: 'OFFICIALLY VERIFIED', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', icon: ShieldCheck };
+      return { label: 'OFFICIALLY VERIFIED', color: 'bg-emerald-50 text-emerald-800 border-emerald-200', icon: ShieldCheck };
     }
     if (trustLevel === 'HIGH TRUST' || (score && score >= 75)) {
-      return { label: `HIGH TRUST (${score}%)`, color: 'bg-teal-500/20 text-teal-300 border-teal-500/40', icon: CheckCircle };
+      return { label: `HIGH TRUST (${score}%)`, color: 'bg-teal-50 text-teal-800 border-teal-200', icon: CheckCircle };
     }
     if (trustLevel === 'MEDIUM TRUST' || (score && score >= 50)) {
-      return { label: `MEDIUM TRUST (${score}%)`, color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40', icon: Award };
+      return { label: `MEDIUM TRUST (${score}%)`, color: 'bg-cyan-50 text-cyan-800 border-cyan-200', icon: Award };
     }
-    return { label: 'PENDING REVIEW', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40', icon: AlertTriangle };
+    return { label: 'PENDING REVIEW', color: 'bg-amber-50 text-amber-800 border-amber-200', icon: AlertTriangle };
   };
 
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
           <div className="flex items-center space-x-2">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center space-x-2">
-              <AlertOctagon className="w-6 h-6 text-rose-400" />
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 flex items-center space-x-2">
+              <AlertOctagon className="w-6 h-6 text-red-600" />
               <span>Incident Monitoring, Verification & Resolution Center</span>
             </h2>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-500/10 text-rose-300 border border-rose-500/20">
+            <span className="px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-red-50 text-red-700 border border-red-200">
               ADMIN CONTROL
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Real-time feed of field-reported landslides, mudslides, flash floods & bridge washouts. Admin review, official verification, rejection, and resolution workflows.
           </p>
         </div>
 
         <div className="flex items-center space-x-3 text-xs font-mono">
-          <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300">
-            Total Active Incidents: <span className="text-rose-400 font-bold">{incidents.length}</span>
+          <div className="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700">
+            Total Active Incidents: <span className="text-red-700 font-bold">{incidents.length}</span>
           </div>
         </div>
       </div>
 
       {/* Admin Safeguards Banner */}
-      <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-slate-300">
+      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-slate-700">
         <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          <div className="p-2 rounded-lg bg-teal-50 text-teal-700 border border-teal-200">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <div className="font-bold text-white text-xs">Field Verification Protocol & Automated Data Fusion</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">
+            <div className="font-bold text-slate-900 text-xs">Field Verification Protocol & Automated Data Fusion</div>
+            <div className="text-[11px] text-slate-500 mt-0.5">
               Incident reports submitted from Field Officer mobile apps undergo hardware GPS lock verification and can be officially verified or rejected by District Authorities.
             </div>
           </div>
         </div>
-        <div className="flex items-center space-x-2 text-[11px] font-mono text-cyan-300 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <div className="flex items-center space-x-2 text-[11px] font-mono text-teal-800 font-semibold shrink-0">
+          <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
           <span>Verified Reports Mutate A* Routing Weights</span>
         </div>
       </div>
 
       {/* Filters Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl glass-panel border border-white/10">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-white border border-slate-200 shadow-card">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -151,14 +168,14 @@ export const IncidentMonitoring: React.FC = () => {
               placeholder="Search title, district, reporter..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-500 w-56"
+              className="pl-9 pr-4 py-2 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-700 w-56 shadow-sm"
             />
           </div>
 
           <select
             value={stateFilter}
             onChange={(e) => setStateFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-500"
+            className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-700 shadow-sm"
           >
             <option value="ALL">All 8 NER States</option>
             <option value="Assam">Assam</option>
@@ -174,7 +191,7 @@ export const IncidentMonitoring: React.FC = () => {
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-500"
+            className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-700 shadow-sm"
           >
             <option value="ALL">All Severities</option>
             <option value="CRITICAL_BLOCKED">Critical - Both Lanes Blocked</option>
@@ -186,7 +203,7 @@ export const IncidentMonitoring: React.FC = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-500"
+            className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-700 shadow-sm"
           >
             <option value="ALL">All Verification Statuses</option>
             <option value="PENDING_VERIFICATION">Pending Verification</option>
@@ -198,7 +215,7 @@ export const IncidentMonitoring: React.FC = () => {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs text-white focus:outline-none focus:border-cyan-500"
+            className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-700 shadow-sm"
           >
             <option value="ALL">All Categories</option>
             <option value="LANDSLIDE">Massive Landslide</option>
@@ -212,8 +229,8 @@ export const IncidentMonitoring: React.FC = () => {
           </select>
         </div>
 
-        <div className="text-xs text-slate-400 font-mono">
-          Showing <span className="text-rose-400 font-bold">{filteredIncidents.length}</span> Field Incidents
+        <div className="text-xs text-slate-500 font-medium">
+          Showing <span className="text-slate-900 font-bold">{filteredIncidents.length}</span> Field Incidents
         </div>
       </div>
 
@@ -229,14 +246,14 @@ export const IncidentMonitoring: React.FC = () => {
           return (
             <div
               key={incident.id}
-              className={`p-5 rounded-2xl glass-panel border space-y-3.5 transition-all ${
+              className={`p-5 rounded-xl bg-white border space-y-3.5 shadow-card transition-all ${
                 isRejected 
-                  ? 'border-white/5 opacity-60 bg-slate-950/40'
+                  ? 'border-slate-200 opacity-60 bg-slate-50'
                   : isResolved
-                  ? 'border-teal-500/40 bg-teal-950/20'
+                  ? 'border-teal-300 bg-teal-50/20'
                   : isCritical 
-                  ? 'border-rose-500/50 bg-rose-950/20 shadow-glow-rose' 
-                  : 'border-white/10 hover:border-cyan-500/40'
+                  ? 'border-red-300 bg-red-50/20 ring-1 ring-red-300' 
+                  : 'border-slate-200 hover:border-teal-600/40 hover:shadow-card-hover'
               }`}
             >
               {/* Header with Trust Score Badge */}
@@ -245,32 +262,32 @@ export const IncidentMonitoring: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <span className="font-mono text-xs text-slate-400">{incident.id}</span>
                     {incident.offline_synced === false && (
-                      <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse flex items-center space-x-1">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse flex items-center space-x-1">
                         <span>📤 PENDING_UPLOAD</span>
                       </span>
                     )}
                     <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase ${
-                      isCritical ? 'bg-rose-600 text-white animate-pulse' : 'bg-amber-500/20 text-amber-300'
+                      isCritical ? 'bg-red-600 text-white animate-pulse' : 'bg-amber-50 text-amber-800 border border-amber-200'
                     }`}>
                       {incident.severity.replace(/_/g, ' ')}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-slate-800 text-slate-300 uppercase">
+                    <span className="px-2 py-0.5 rounded text-[9px] font-mono font-semibold bg-slate-100 text-slate-700 uppercase">
                       {incident.category.replace(/_/g, ' ')}
                     </span>
                   </div>
-                  <h3 className="font-bold text-base text-white mt-1">{incident.title}</h3>
+                  <h3 className="font-bold text-base text-slate-900 mt-1">{incident.title}</h3>
                 </div>
 
-                <div className={`flex items-center space-x-1 border px-2.5 py-1 rounded-full text-[10px] font-bold ${trustBadge.color}`}>
+                <div className={`flex items-center space-x-1 border px-2.5 py-0.5 rounded-full text-[10px] font-bold ${trustBadge.color}`}>
                   <TrustIcon className="w-3.5 h-3.5" />
                   <span>{trustBadge.label}</span>
                 </div>
               </div>
 
               {/* Location & Metadata */}
-              <div className="flex items-center space-x-4 text-xs text-slate-400 font-mono">
-                <span className="flex items-center space-x-1 text-cyan-300">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="flex items-center space-x-4 text-xs text-slate-500 font-mono">
+                <span className="flex items-center space-x-1 text-teal-800 font-medium">
+                  <MapPin className="w-3.5 h-3.5 text-teal-700" />
                   <span>{incident.district}, {incident.state}</span>
                 </span>
                 <span>•</span>
@@ -281,35 +298,35 @@ export const IncidentMonitoring: React.FC = () => {
               </div>
 
               {/* Description */}
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-700 leading-relaxed">
                 {incident.description}
               </p>
 
               {/* Photo Evidence & GPS Tag */}
               {incident.photo_url && (
-                <div className="relative rounded-xl overflow-hidden border border-white/10 h-36">
+                <div className="relative rounded-lg overflow-hidden border border-slate-200 h-36">
                   <img
                     src={incident.photo_url}
                     alt={incident.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute bottom-2 left-2 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] text-slate-300 font-mono flex items-center space-x-1.5 border border-white/10">
-                    <span>📍 GPS Lock: {incident.lat.toFixed(4)}°N, {incident.lng.toFixed(4)}°E</span>
-                    <span className="text-emerald-400">✓ Hardware Authenticated</span>
+                  <div className="absolute bottom-2 left-2 bg-slate-900/90 text-white px-2.5 py-1 rounded-md text-[10px] font-mono flex items-center space-x-1.5">
+                    <span>📍 GPS: {incident.lat.toFixed(4)}°N, {incident.lng.toFixed(4)}°E</span>
+                    <span className="text-emerald-400 font-bold">✓ Verified</span>
                   </div>
                 </div>
               )}
 
               {/* Passability Status */}
-              <div className="p-2.5 rounded-xl bg-slate-900/80 border border-white/5 text-[11px] text-slate-300 flex items-center justify-between">
+              <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] text-slate-700 flex items-center justify-between">
                 <span>Current Road Passability:</span>
-                <span className="font-bold text-white uppercase">{incident.passable_by.replace(/_/g, ' ')}</span>
+                <span className="font-bold text-slate-900 uppercase">{incident.passable_by.replace(/_/g, ' ')}</span>
               </div>
 
               {/* Reporter Info & Admin Action Toolbar */}
-              <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-                <div className="text-[11px] text-slate-400">
-                  Reported by: <span className="text-white font-medium">{incident.reporter_name}</span> ({incident.reporter_role})
+              <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="text-[11px] text-slate-500">
+                  Reported by: <span className="text-slate-900 font-semibold">{incident.reporter_name}</span> ({incident.reporter_role})
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
@@ -317,7 +334,7 @@ export const IncidentMonitoring: React.FC = () => {
                   {incident.verification_status !== 'VERIFIED_OFFICIAL' && (
                     <button
                       onClick={() => handleVerifyOfficial(incident.id)}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold transition-colors flex items-center space-x-1"
+                      className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-bold transition-colors flex items-center space-x-1"
                       title="Grant official verification and integrate into routing graph"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
@@ -329,7 +346,7 @@ export const IncidentMonitoring: React.FC = () => {
                   {incident.verification_status !== 'RESOLVED' && (
                     <button
                       onClick={() => handleResolveIncident(incident.id)}
-                      className="px-3 py-1.5 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/40 text-[11px] font-bold transition-colors flex items-center space-x-1"
+                      className="px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-[11px] font-bold transition-colors flex items-center space-x-1"
                       title="Mark as cleared and restored for normal traffic"
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
@@ -341,7 +358,7 @@ export const IncidentMonitoring: React.FC = () => {
                   {incident.verification_status !== 'REJECTED' && (
                     <button
                       onClick={() => handleRejectIncident(incident.id)}
-                      className="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[11px] font-semibold transition-colors flex items-center space-x-1"
+                      className="px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-[11px] font-semibold transition-colors flex items-center space-x-1"
                       title="Flag false or erroneous report"
                     >
                       <XCircle className="w-3.5 h-3.5" />

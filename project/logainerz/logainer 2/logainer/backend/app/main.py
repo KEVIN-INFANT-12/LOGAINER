@@ -21,7 +21,9 @@ from backend.app.api.endpoints import (
     ws,
     gdi,
     satellite,
-    corridors
+    corridors,
+    what_if,
+    emergencies
 )
 
 # Background telemetry broadcaster task
@@ -103,6 +105,10 @@ app.include_router(weather.router, prefix=settings.API_V1_STR)
 app.include_router(gdi.router, prefix=settings.API_V1_STR)
 app.include_router(satellite.router, prefix=settings.API_V1_STR)
 app.include_router(corridors.router, prefix=settings.API_V1_STR)
+app.include_router(what_if.router, prefix=settings.API_V1_STR)
+app.include_router(what_if.router, prefix="/api") # Root /api/what-if support
+app.include_router(emergencies.router, prefix=settings.API_V1_STR)
+app.include_router(emergencies.router, prefix="/api") # Root /api/emergencies support
 app.include_router(ws.router)
 
 # Mount static media uploads directory

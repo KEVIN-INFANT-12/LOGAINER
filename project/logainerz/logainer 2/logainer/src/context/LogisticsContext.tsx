@@ -7,13 +7,15 @@ import {
   Incident, 
   WeatherStation, 
   OptimizedRoute,
-  OfflineMediaAttachment
+  OfflineMediaAttachment,
+  EmergencyAlert
 } from '../types';
 import { api } from '../services/api';
 import { wsClient } from '../services/websocket';
 import { offlineDB } from '../services/db';
 import { networkService } from '../services/network';
 import { syncManager } from '../services/syncManager';
+import { useLanguage } from './LanguageContext';
 
 export interface ActiveLayers {
   satellite: boolean;
@@ -41,6 +43,7 @@ interface LogisticsContextType {
   incidents: Incident[];
   districtsHealth: DistrictHealth[];
   weatherStations: WeatherStation[];
+  activeEmergencies: EmergencyAlert[];
   activeLayers: ActiveLayers;
   toggleLayer: (layer: keyof ActiveLayers) => void;
   selectedVehicle: FleetVehicle | null;
@@ -64,18 +67,21 @@ interface LogisticsContextType {
   syncOfflineData: () => Promise<number>;
   reportNewIncident: (incident: Partial<Incident>, mediaAttachments?: { file: File | Blob; name: string; type: 'PHOTO' | 'VIDEO' }[]) => Promise<void>;
   triggerVehicleSOS: (vehicleId: string) => Promise<void>;
+  resolveEmergency: (emergencyId: string) => Promise<void>;
   refreshAllData: () => Promise<void>;
 }
 
 const LogisticsContext = createContext<LogisticsContextType | undefined>(undefined);
 
 export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { speakAlert } = useLanguage();
   const [hubs, setHubs] = useState<LogisticsHub[]>([]);
   const [chokepoints, setChokepoints] = useState<Chokepoint[]>([]);
   const [vehicles, setVehicles] = useState<FleetVehicle[]>([]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [districtsHealth, setDistrictsHealth] = useState<DistrictHealth[]>([]);
   const [weatherStations, setWeatherStations] = useState<WeatherStation[]>([]);
+  const [activeEmergencies, setActiveEmergencies] = useState<EmergencyAlert[]>([]);
   
   const [selectedVehicle, setSelectedVehicle] = useState<FleetVehicle | null>(null);
   const [selectedChokepoint, setSelectedChokepoint] = useState<Chokepoint | null>(null);
@@ -128,13 +134,14 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // Initial and reactive data load
   const refreshAllData = useCallback(async () => {
     try {
-      const [hubsData, chokepointsData, vehiclesData, incidentsData, districtsData, weatherData] = await Promise.allSettled([
+      const [hubsData, chokepointsData, vehiclesData, incidentsData, districtsData, weatherData, emergenciesData] = await Promise.allSettled([
         api.getHubs(),
         api.getChokepoints(),
         api.getVehicles(),
         api.getIncidents(),
         api.getDistrictsHealth(),
-        api.getWeatherStations()
+        api.getWeatherStations(),
+        api.getEmergencies('ACTIVE')
       ]);
 
       if (hubsData.status === 'fulfilled') setHubs(hubsData.value);
@@ -143,6 +150,7 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (incidentsData.status === 'fulfilled') setIncidents(incidentsData.value);
       if (districtsData.status === 'fulfilled') setDistrictsHealth(districtsData.value);
       if (weatherData.status === 'fulfilled') setWeatherStations(weatherData.value.stations);
+      if (emergenciesData.status === 'fulfilled') setActiveEmergencies(emergenciesData.value);
     } catch (err) {
       console.error('Failed to load logistics data:', err);
     }
@@ -163,12 +171,6 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const online = state.isOnline;
       setIsOnline(online);
       setIsOfflineSimulated(networkService.isSimulatedOffline());
-
-      if (online) {
-        // Connected
-      } else {
-        // Offline
-      }
     });
 
     // 2. Subscribe to Sync Manager progress
@@ -177,7 +179,7 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       setPendingOfflineCount(syncState.totalPending);
     });
 
-    // 3. WebSocket Telemetry Subscription
+    // 3. WebSocket Telemetry & Emergency Broadcast Subscription
     const unsubscribeWS = wsClient.subscribe((payload) => {
       if (payload.type === 'FLEET_GPS_TICK' && payload.vehicles) {
         setVehicles((prev) =>
@@ -197,6 +199,24 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             return v;
           })
         );
+      } else if (payload.type === 'EMERGENCY_BROADCAST') {
+        if (payload.event === 'EMERGENCY_TRIGGERED' && payload.emergency) {
+          const emg = payload.emergency;
+          setActiveEmergencies((prev) => [emg, ...prev.filter((e) => e.emergency_id !== emg.emergency_id)]);
+          addToast(
+            'CRITICAL',
+            `🚨 EMERGENCY ALERT: ${emg.emergency_type}`,
+            `${emg.message || emg.emergency_type} reported by ${emg.sender_role} (${emg.sender_name}) at ${emg.location_name || `${emg.latitude?.toFixed(4)}°N, ${emg.longitude?.toFixed(4)}°E`}. Immediate attention required!`
+          );
+          // Trigger localized voice alert on Admin interface
+          speakAlert(`Emergency alert. A ${emg.emergency_type} has been reported near ${emg.location_name || 'monitored coordinates'}. Please review immediately.`);
+          refreshAllData();
+        } else if (payload.event === 'EMERGENCY_RESOLVED' && payload.emergency) {
+          const emg = payload.emergency;
+          setActiveEmergencies((prev) => prev.filter((e) => e.emergency_id !== emg.emergency_id));
+          addToast('SUCCESS', 'Emergency Resolved', `Alert #${emg.emergency_id} has been marked as resolved.`);
+          refreshAllData();
+        }
       } else if (payload.type === 'TRIP_STATUS_UPDATE') {
         const title = payload.status === 'ACCEPTED' ? 'Driver Accepted Trip' :
                       payload.status === 'COMPLETED' ? 'Trip Completed' :
@@ -215,7 +235,18 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       unsubscribeSync();
       unsubscribeWS();
     };
-  }, [addToast, refreshAllData, updatePendingCounts]);
+  }, [addToast, refreshAllData, updatePendingCounts, speakAlert]);
+
+  const resolveEmergency = async (emergencyId: string) => {
+    try {
+      await api.resolveEmergency(emergencyId, 'Operations Admin');
+      setActiveEmergencies((prev) => prev.filter((e) => e.emergency_id !== emergencyId));
+      addToast('SUCCESS', 'Emergency Resolved', `Alert #${emergencyId} resolved successfully.`);
+      refreshAllData();
+    } catch (err: any) {
+      addToast('CRITICAL', 'Failed to Resolve Emergency', err.message || 'Server communication error');
+    }
+  };
 
   const toggleOfflineSimulation = () => {
     const next = !isOfflineSimulated;
@@ -379,6 +410,7 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         incidents,
         districtsHealth,
         weatherStations,
+        activeEmergencies,
         activeLayers,
         toggleLayer,
         selectedVehicle,
@@ -402,6 +434,7 @@ export const LogisticsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         syncOfflineData,
         reportNewIncident,
         triggerVehicleSOS,
+        resolveEmergency,
         refreshAllData
       }}
     >

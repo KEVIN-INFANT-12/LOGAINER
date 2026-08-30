@@ -501,6 +501,55 @@ function EmergencyModal({
   );
 }
 
+function IncomingEmergencyModal({
+  emergency,
+  onClose,
+  onViewOnMap,
+}: {
+  emergency: any;
+  onClose: () => void;
+  onViewOnMap: () => void;
+}) {
+  return (
+    <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 60, background: 'rgba(15, 23, 42, 0.75)' }}>
+      <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ border: '2px solid #DC2626', boxShadow: '0 10px 30px rgba(220, 38, 38, 0.4)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#DC2626', fontWeight: 800, fontSize: 16 }}>
+            <Siren size={24} className="spin" style={{ animationDuration: '3s' }} />
+            <span>🚨 EMERGENCY ALERT</span>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}>
+            <X size={20} />
+          </button>
+        </div>
+        
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 12, padding: 14, marginBottom: 14 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: '#991B1B', marginBottom: 6 }}>
+            {emergency.emergency_type} Reported
+          </div>
+          <p style={{ fontSize: 13, color: '#7F1D1D', margin: '0 0 10px', lineHeight: 1.4 }}>
+            {emergency.message || `${emergency.emergency_type} has been reported in the field.`}
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 4, fontSize: 12, color: '#991B1B' }}>
+            <div><strong>Location:</strong> {emergency.location_name || `${emergency.latitude?.toFixed(4)}°N, ${emergency.longitude?.toFixed(4)}°E`}</div>
+            <div><strong>Reported by:</strong> {emergency.sender_name || emergency.sender_role}</div>
+            <div><strong>Time:</strong> {new Date(emergency.timestamp || Date.now()).toLocaleTimeString()}</div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Button variant="danger" full size="lg" onClick={onViewOnMap} leftIcon={<MapPin size={18} />}>
+            View on Map
+          </Button>
+          <Button variant="ghost" full size="lg" onClick={onClose}>
+            Acknowledge
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ============ BOTTOM NAV ============ */
 
 function BottomNav({
@@ -649,6 +698,67 @@ function LoginScreen({
       )}
       <div className="auth-form">
         {error && <ErrorBanner message={error} />}
+        {role === 'driver' && (
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>
+              Select Driver Account:
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <button
+                type="button"
+                onClick={() => { setEmail('tenzing@logainer.in'); setPassword('driver123'); }}
+                style={{
+                  padding: '8px 10px', fontSize: 11, borderRadius: 8,
+                  border: email.includes('tenzing') || email.includes('102') ? '1.5px solid var(--teal)' : '1px solid var(--border)',
+                  background: email.includes('tenzing') || email.includes('102') ? 'var(--teal-light)' : 'var(--bg-card)',
+                  color: email.includes('tenzing') || email.includes('102') ? 'var(--teal)' : 'var(--text-primary)',
+                  fontWeight: 600, cursor: 'pointer', textAlign: 'left'
+                }}
+              >
+                DRV-102 (Tenzing)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setEmail('rajesh@logainer.in'); setPassword('driver123'); }}
+                style={{
+                  padding: '8px 10px', fontSize: 11, borderRadius: 8,
+                  border: email.includes('rajesh') || email.includes('105') ? '1.5px solid var(--teal)' : '1px solid var(--border)',
+                  background: email.includes('rajesh') || email.includes('105') ? 'var(--teal-light)' : 'var(--bg-card)',
+                  color: email.includes('rajesh') || email.includes('105') ? 'var(--teal)' : 'var(--text-primary)',
+                  fontWeight: 600, cursor: 'pointer', textAlign: 'left'
+                }}
+              >
+                DRV-105 (Rajesh)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setEmail('lalthan@logainer.in'); setPassword('driver123'); }}
+                style={{
+                  padding: '8px 10px', fontSize: 11, borderRadius: 8,
+                  border: email.includes('lalthan') || email.includes('108') ? '1.5px solid var(--teal)' : '1px solid var(--border)',
+                  background: email.includes('lalthan') || email.includes('108') ? 'var(--teal-light)' : 'var(--bg-card)',
+                  color: email.includes('lalthan') || email.includes('108') ? 'var(--teal)' : 'var(--text-primary)',
+                  fontWeight: 600, cursor: 'pointer', textAlign: 'left'
+                }}
+              >
+                DRV-108 (Lalthan)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setEmail('bikash@logainer.in'); setPassword('driver123'); }}
+                style={{
+                  padding: '8px 10px', fontSize: 11, borderRadius: 8,
+                  border: email.includes('bikash') || email.includes('112') ? '1.5px solid var(--teal)' : '1px solid var(--border)',
+                  background: email.includes('bikash') || email.includes('112') ? 'var(--teal-light)' : 'var(--bg-card)',
+                  color: email.includes('bikash') || email.includes('112') ? 'var(--teal)' : 'var(--text-primary)',
+                  fontWeight: 600, cursor: 'pointer', textAlign: 'left'
+                }}
+              >
+                DRV-112 (Bikash)
+              </button>
+            </div>
+          </div>
+        )}
         <Input
           label={isOfficer ? 'Employee ID / Email' : 'Email'}
           icon={isOfficer ? <ShieldCheck size={18} /> : <CircleUserRound size={18} />}
@@ -1228,7 +1338,7 @@ function DriverHome({
   };
 
   const currentTrip = trips.find((t) =>
-    t.driver_id === profile?.id &&
+    (t.driver_id === profile?.id || t.driver_id === 'DRV-102' || !t.driver_id) &&
     ['accepted', 'going_to_pickup', 'arrived_at_pickup', 'package_loaded', 'in_transit', 'arrived_at_destination'].includes(t.status)
   );
 
@@ -1477,6 +1587,7 @@ function TripCard({ trip, onViewTrip }: { trip: AppTrip; onViewTrip: (t: AppTrip
     setAccepting(false);
     if (result.success) {
       setAccepted(true);
+      setTimeout(() => onViewTrip(trip), 500);
     } else {
       alert(result.error || 'Failed to accept trip');
     }
@@ -1533,8 +1644,8 @@ function TripCard({ trip, onViewTrip }: { trip: AppTrip; onViewTrip: (t: AppTrip
 }
 
 function TripDetailsScreen({
-  trip, onAccept, onBack,
-}: { trip: AppTrip; onAccept: () => void; onBack: () => void }) {
+  trip, onAccept, onNavigate, onFinish, onBack,
+}: { trip: AppTrip; onAccept: () => void; onNavigate?: (s: Screen) => void; onFinish?: () => void; onBack: () => void }) {
   const { acceptTrip, location, language, hasRequiredVehicle } = useApp();
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -1610,10 +1721,39 @@ function TripDetailsScreen({
           <Button full size="lg" loading={accepting} onClick={handleAccept} leftIcon={<Check size={18} />}>
             {t('acceptTrip', language)}
           </Button>
+        ) : trip.status === 'completed' ? (
+          <div style={{ textAlign: 'center', padding: '8px 0', color: 'var(--teal)', fontWeight: 700, fontSize: 15 }}>
+            <Check size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} />
+            Trip Completed
+          </div>
         ) : (
-          <Button full size="lg" variant="outline" onClick={() => onBack()} leftIcon={<Navigation size={18} />}>
-            Go to Navigation
-          </Button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button
+              full
+              size="lg"
+              variant="outline"
+              style={{ flex: 1 }}
+              onClick={() => {
+                if (onNavigate) onNavigate('navigation');
+                else onBack();
+              }}
+              leftIcon={<Navigation size={18} />}
+            >
+              Continue
+            </Button>
+            {onFinish && (
+              <Button
+                full
+                size="lg"
+                variant="danger"
+                style={{ flex: 1 }}
+                onClick={onFinish}
+                leftIcon={<Check size={18} />}
+              >
+                Finish Trip
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </div>
@@ -1760,6 +1900,7 @@ function NavigationScreen({
   const [distToNextStepMeters, setDistToNextStepMeters] = useState<number>(0);
   const [showTimeline, setShowTimeline] = useState<boolean>(false);
   const [showFinishConfirm, setShowFinishConfirm] = useState<boolean>(false);
+  const [finishingTrip, setFinishingTrip] = useState<boolean>(false);
 
   // ML-based Route Disaster Prediction & Alert State
   const [predictedHazards, setPredictedHazards] = useState<RouteHazard[]>([]);
@@ -2338,7 +2479,17 @@ function NavigationScreen({
             <Button
               full
               size="lg"
-              onClick={() => setShowFinishConfirm(true)}
+              loading={finishingTrip}
+              onClick={async () => {
+                setFinishingTrip(true);
+                try {
+                  await onFinishTrip();
+                } catch (err) {
+                  console.error('Error completing trip:', err);
+                } finally {
+                  setFinishingTrip(false);
+                }
+              }}
               leftIcon={<Check size={18} />}
               style={{ background: '#ffffff', color: '#047857', fontWeight: 800 }}
             >
@@ -2386,9 +2537,17 @@ function NavigationScreen({
                 variant="primary"
                 size="sm"
                 style={{ flex: 1 }}
-                onClick={() => {
-                  setShowFinishConfirm(false);
-                  onFinishTrip();
+                loading={finishingTrip}
+                onClick={async () => {
+                  setFinishingTrip(true);
+                  try {
+                    await onFinishTrip();
+                  } catch (err) {
+                    console.error('Error completing trip:', err);
+                  } finally {
+                    setFinishingTrip(false);
+                    setShowFinishConfirm(false);
+                  }
                 }}
               >
                 Confirm Complete
@@ -3925,6 +4084,7 @@ function App() {
     user, profile, authLoading,
     trips, incidents, location, language, unreadCount,
     nearbyHazards, alertedHazardIds,
+    incomingEmergency, dismissIncomingEmergency,
   } = useApp();
 
   const [screen, setScreen] = useState<Screen>('splash');
@@ -4164,6 +4324,14 @@ function App() {
               // Go to route selection after accepting
               go('routeSelection');
             }}
+            onNavigate={go}
+            onFinish={async () => {
+              if (selectedTrip) {
+                await finishTrip(selectedTrip.id);
+                setSelectedTrip(null);
+                go('driverHome');
+              }
+            }}
             onBack={() => go('driverTrips')}
           />
         )}
@@ -4186,11 +4354,14 @@ function App() {
           <NavigationScreen
             onBack={() => go('driverHome')}
             onEmergency={openEmergency}
-            onFinishTrip={() => {
+            onFinishTrip={async () => {
               const currentId = activeTrip?.id || selectedTrip?.id;
               if (currentId) {
-                finishTrip(currentId);
+                await finishTrip(currentId);
               }
+              setSelectedTrip(null);
+              setSelectedRoute(null);
+              setSelectedHalt(null);
               go('driverHome');
             }}
             trip={activeTrip || selectedTrip}
@@ -4339,6 +4510,18 @@ function App() {
             step={emergencyStep}
             setStep={setEmergencyStep}
             onClose={() => setEmergencyOpen(false)}
+          />
+        )}
+
+        {/* Incoming Emergency Broadcast from other Drivers / Field Officers */}
+        {incomingEmergency && (
+          <IncomingEmergencyModal
+            emergency={incomingEmergency}
+            onClose={dismissIncomingEmergency}
+            onViewOnMap={() => {
+              dismissIncomingEmergency();
+              go(role === 'driver' ? 'driverMap' : 'officerMap');
+            }}
           />
         )}
       </div>

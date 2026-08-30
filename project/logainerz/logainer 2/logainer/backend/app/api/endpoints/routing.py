@@ -266,6 +266,14 @@ async def accept_trip(trip_id: str, req: Optional[DriverActionRequest] = None):
     if trip.get("status") in ["COMPLETED"]:
         raise HTTPException(status_code=400, detail="Cannot accept a completed trip.")
 
+    if req and req.driver_id:
+        assigned_driver = trip.get("driver_id")
+        if assigned_driver and assigned_driver not in ["", "None", None]:
+            assigned_norm = assigned_driver.upper().replace("-", "")
+            caller_norm = req.driver_id.upper().replace("-", "")
+            if assigned_norm != caller_norm and caller_norm not in ["DEMODRIVER", "DRIVER", "ADMIN"] and assigned_norm not in ["DEMODRIVER", "DRIVER"]:
+                raise HTTPException(status_code=403, detail=f"Unauthorized: Trip #{trip_id} is assigned to driver {assigned_driver}")
+
     updated_trip = db_update_trip_status(
         trip_id,
         "ACCEPTED",

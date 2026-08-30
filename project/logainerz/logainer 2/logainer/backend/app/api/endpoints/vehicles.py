@@ -127,6 +127,23 @@ def list_vehicles(
     connectivity: Optional[str] = None,
     limit: int = 100
 ):
+    try:
+        from backend.app.data.database import db_list_trips
+        trips = db_list_trips()
+        for t in trips:
+            veh = next((v for v in FLEET_DB if v["id"] == t.get("vehicle_id") or v["vehicle_no"] == t.get("vehicle_no")), None)
+            if veh:
+                veh["status"] = t.get("status", veh.get("status"))
+                if t.get("current_lat") and t.get("current_lng"):
+                    veh["current_lat"] = t["current_lat"]
+                    veh["current_lng"] = t["current_lng"]
+                if t.get("progress_pct") is not None:
+                    veh["progress_pct"] = t["progress_pct"]
+                if t.get("speed_kmh") is not None:
+                    veh["speed_kmh"] = t["speed_kmh"]
+    except Exception:
+        pass
+
     res = FLEET_DB
     if cargo_type and cargo_type != "ALL":
         res = [v for v in res if v["cargo_type"] == cargo_type or v.get("commodity_type") == cargo_type]

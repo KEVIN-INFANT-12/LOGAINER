@@ -3,13 +3,9 @@ import {
   X, 
   Volume2, 
   Radio, 
-  Sparkles, 
-  Languages, 
-  CheckCircle2,
-  AlertTriangle
+  Languages 
 } from 'lucide-react';
-import { useLanguage, LANGUAGES, LanguageCode } from '../context/LanguageContext';
-import { useLogistics } from '../context/LogisticsContext';
+import { useLanguage, LANGUAGES } from '../context/LanguageContext';
 
 interface VoiceBroadcastModalProps {
   isOpen: boolean;
@@ -96,130 +92,96 @@ const MULTILINGUAL_PRESETS: Record<string, Array<{ title: string; text: string }
     },
     {
       title: 'മെഡിക്കൽ ഓക്സിജൻ എമർജൻസി എസ്കോർട്ട്',
-      text: 'ഗുവാഹത്തിയിൽ നിന്ന് സിൽച്ചാറിലേക്കുള്ള ഓക്സിജൻ ടാങ്കറുകൾക്കായി ഗ്രീൻ കോറിഡോർ സജ്ജമാക്കി. NDRF സുരക്ഷ നിലവിലുണ്ട്.'
-    }
-  ],
-  mr: [
-    {
-      title: 'सोनापूर बोगदा मार्ग ब्लॉक इशारा',
-      text: 'चालकांसाठी सूचना: राष्ट्रीय महामार्ग ६ वरील सोनापूर बोगदा दरड कोसळल्यामुळे पूर्णपणे बंद आहे. कृपया उमरांगसो-हाफलॉंग बायपास वापरा.'
-    },
-    {
-      title: 'सेला पास बर्फवृष्टी इशारा',
-      text: 'तवांग महामार्गासाठी इशारा: सेला पासवर तीव्र बर्फवृष्टी सुरू आहे. टायर चेन अनिवार्य आहेत.'
-    },
-    {
-      title: 'वैद्यकीय ऑक्सिजन ग्रीन कॉरिडोअर',
-      text: 'गुवाहाटी ते सिलचर ऑक्सिजन टँकरसाठी आपत्कालीन ग्रीन कॉरिडोअर सुरू करण्यात आला आहे. NDRF एस्कॉर्ट तैनात आहे.'
+      text: 'ഗുവാഹത്തിയിൽ നിന്ന് സിൽച്ചാറിലേക്കുള്ള ഓക്സിജൻ ടാങ്കറുകൾക്കായി ഗ്രീൻ കോറിഡോർ സജ്ಜമാക്കി. NDRF സുരക്ഷ നിലവിലുണ്ട്.'
     }
   ],
   hi: [
     {
-      title: 'सोनापुर सुरंग अवरोध चेतावनी',
-      text: 'चालक ध्यान दें: राष्ट्रीय राजमार्ग 6 पर सोनापुर सुरंग भारी मलबे के कारण पूरी तरह बंद है। कृपया उमरांगसो-हाफलोंग वैकल्पिक ग्रीन कॉरिडोर मार्ग का उपयोग करें।'
+      title: 'सोनापुर टनल अवरोध चेतावनी',
+      text: 'काफिले के चालकों का ध्यान दें: राष्ट्रीय राजमार्ग 6 पर सोनापुर सुरंग भारी मलबे के कारण पूरी तरह से बंद है। कृपया उमरांगसो-हाफलोंग ग्रीन कॉरिडोर बाईपास का उपयोग करें।'
     },
     {
-      title: 'सेला पास बर्फबारी व फिसलन चेतावनी',
-      text: 'तवांग कॉरिडोर चेतावनी: सेला दर्रे पर भारी बर्फबारी और फिसलन की स्थिति है। टायर चेन अनिवार्य है। वाहन की गति 25 किमी/घंटा बनाए रखें।'
+      title: 'सेला पास बर्फबारी चेतावनी',
+      text: 'तवांग कॉरिडोर चेतावनी: सेला पास में भारी बर्फबारी हो रही है। टायर चेन लगाना अनिवार्य है।'
     },
     {
-      title: 'पगला पहाड़ भूस्खलन एडवाइजरी',
-      text: 'दीमापुर-कोहिमा एनएच-29: पगला पहाड़ पर पत्थरों का गिरना जारी है। बीआरओ द्वारा सिंगल लेन में यातायात नियंत्रित किया जा रहा है।'
+      title: 'मेडिकल ऑक्सीजन इमरजेंसी एस्कॉर्ट',
+      text: 'गुवाहाटी से सिलचर जाने वाले ऑक्सीजन टैंकरों के लिए ग्रीन कॉरिडोर खोला गया है।'
+    }
+  ],
+  as: [
+    {
+      title: 'সোণাপুৰ সুৰংগ অৱৰোধ সতৰ্কবাৰ্তা',
+      text: 'চালকসকলৰ দৃষ্টি আকৰ্ষণ: ৰাষ্ট্ৰীয় ঘাইপথ ৬ ৰ সোণাপুৰ সুৰংগ সম্পূৰ্ণৰূপে বন্ধ হৈ আছে। অনুগ্ৰহ কৰি উমৰাংছ’-হাফলং বিকল্প পথ ব্যৱহাৰ কৰক।'
     },
     {
-      title: 'मेडिकल ऑक्सीजन आपातकालीन ग्रीन कॉरिडोर',
-      text: 'गुवाहाटी से सिलचर जाने वाले ऑक्सीजन टैंकरों के लिए आपातकालीन ग्रीन कॉरिडोर चालू है। एनडीआरएफ एस्कॉर्ट सक्रिय है।'
+      title: 'চেলা পাছ বৰফ সতৰ্কবাৰ্তা',
+      text: 'চেলা পাছত প্ৰচণ্ড বৰফপাত আৰু পিচ্ছিল পথৰ বাবে সতৰ্কতা অৱলম্বন কৰক।'
     }
   ],
   bn: [
     {
       title: 'সোনাপুর টানেল অবরুদ্ধ সতর্কতা',
-      text: 'চালকদের অবগতির জন্য: জাতীয় সড়ক ৬-এর সোনাপুর টানেল ভূমিধসের কারণে সম্পূর্ণ বন্ধ। দয়া করে উমরাংসো-হাফলং বিকল্প পথ ব্যবহার করুন।'
-    },
-    {
-      title: 'সেলা পাস তুষারপাত সতর্কতা',
-      text: 'তাওয়াং করিডোরের জন্য সতর্কতা: সেলা পাসে তীব্র তুষারঝড় চলছে। টায়ার চেইন বাধ্যতামূলক। গতিবেগ ঘণ্টায় ২৫ কিমি রাখুন।'
-    },
-    {
-      title: 'মেডিকেল অক্সিজেন জরুরি এসকর্ট',
-      text: 'গুয়াহাটি থেকে শিলচরগামী অক্সিজেন ট্যাঙ্কারের জন্য গ্রিন করিডোর খালি করা হয়েছে। এনডিআরএফ এসকর্ট সক্রিয়।'
-    }
-  ],
-  as: [
-    {
-      title: 'সোণাপুৰ সুৰংগ পথ বন্ধৰ সতৰ্কবাৰ্তা',
-      text: 'চালকসকলৰ দৃষ্টি আকৰ্ষণ কৰা হৈছে: ৬ নং ৰাষ্ট্ৰীয় ঘাইপথৰ সোণাপুৰ সুৰংগ ভূমিস্খলনৰ বাবে সম্পূৰ্ণ বন্ধ। অনুগ্ৰহ কৰি উমৰাংছ\'-হাফলং বিকল্প পথ লওক।'
-    },
-    {
-      title: 'চেলা পাছ তুষাৰপাত সতৰ্কতা',
-      text: 'টাৱাং পথৰ বাবে সতৰ্কবাৰ্তা: চেলা পাছত বৰফ আৰু কুঁৱলীৰ প্ৰকোপ বাঢ়িছে। টায়াৰত চেইন লগোৱা বাধ্যতামূলক।'
-    },
-    {
-      title: 'চিকিৎসা অক্সিজেন জৰুৰী এচকৰ্ট',
-      text: 'গুৱাহাটীৰ পৰা শিলচৰলৈ অক্সিজেন টেংকাৰৰ বাবে জৰুৰী গ্ৰীণ কৰিডৰ সক্ৰিয় কৰা হৈছে।'
+      text: 'চালকবৃন্দের দৃষ্টি আকর্ষণ: জাতীয় সড়ক ৬-এর সোনাপুর টানেল কাদার কারণে সম্পূর্ণ অবরুদ্ধ। বিকল্প হিসেবে উমরাংসো-হাফলং পথ ব্যবহার করুন।'
     }
   ]
 };
 
 export const VoiceBroadcastModal: React.FC<VoiceBroadcastModalProps> = ({ isOpen, onClose }) => {
   const { language, setLanguage, speakAlert } = useLanguage();
-  const { chokepoints, addToast } = useLogistics();
+  const [customText, setCustomText] = useState('');
 
   const currentPresets = MULTILINGUAL_PRESETS[language] || MULTILINGUAL_PRESETS['en'];
 
-  const [customText, setCustomText] = useState(currentPresets[0]?.text || '');
-
   useEffect(() => {
-    const presets = MULTILINGUAL_PRESETS[language] || MULTILINGUAL_PRESETS['en'];
-    if (presets && presets[0]) {
-      setCustomText(presets[0].text);
+    if (currentPresets.length > 0) {
+      setCustomText(currentPresets[0].text);
     }
   }, [language]);
 
   if (!isOpen) return null;
 
   const handleSpeak = (textToSpeak: string) => {
-    speakAlert(textToSpeak);
-    addToast('SUCCESS', 'Voice Broadcast Dispatched', `Audio alert synthesized in ${language.toUpperCase()} voice profile.`);
+    if (textToSpeak) {
+      speakAlert(textToSpeak);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
-      <div className="w-full max-w-lg rounded-2xl glass-panel-glow p-6 shadow-2xl border border-cyan-500/30 space-y-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in">
+      <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-modal border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-start justify-between pb-3 border-b border-white/10">
+        <div className="flex items-start justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-              <Volume2 className="w-6 h-6" />
+            <div className="p-2 rounded-lg bg-teal-50 text-teal-700 border border-teal-200">
+              <Radio className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Multilingual Voice Alert Broadcaster</h3>
-              <p className="text-xs text-slate-400">
-                Text-to-Speech audio synthesizer for truck drivers in low-visibility mountain passes
-              </p>
+              <h3 className="text-base font-bold text-slate-900">Multilingual Driver Voice Synthesizer</h3>
+              <p className="text-xs text-slate-500">Instant regional language text-to-speech hazard broadcast</p>
             </div>
           </div>
 
-          <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Language selector */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center space-x-1.5">
-            <Languages className="w-3.5 h-3.5 text-cyan-400" />
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center space-x-1.5">
+            <Languages className="w-3.5 h-3.5 text-teal-700" />
             <span>Select Broadcast Language:</span>
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-36 overflow-y-auto p-1 rounded-xl bg-slate-950/40 border border-white/5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-36 overflow-y-auto p-1 rounded-lg bg-slate-50 border border-slate-200">
             {LANGUAGES.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                className={`p-2 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all border ${
+                className={`p-2 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all border ${
                   language === lang.code
-                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500 shadow-glow-cyan'
-                    : 'bg-slate-900/60 text-slate-400 border-white/5 hover:border-white/20'
+                    ? 'bg-teal-50 text-teal-800 border-teal-300 font-bold shadow-sm'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                 }`}
               >
                 <span>{lang.flag}</span>
@@ -231,7 +193,7 @@ export const VoiceBroadcastModal: React.FC<VoiceBroadcastModalProps> = ({ isOpen
 
         {/* Preset Announcements */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
             Translated Dispatch Presets ({language.toUpperCase()}):
           </label>
           <div className="space-y-2">
@@ -242,13 +204,13 @@ export const VoiceBroadcastModal: React.FC<VoiceBroadcastModalProps> = ({ isOpen
                   setCustomText(preset.text);
                   handleSpeak(preset.text);
                 }}
-                className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 hover:border-cyan-500/40 cursor-pointer text-xs transition-all flex items-center justify-between group"
+                className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:border-teal-400 hover:bg-teal-50/30 cursor-pointer text-xs transition-all flex items-center justify-between group"
               >
                 <div>
-                  <div className="font-semibold text-white group-hover:text-cyan-300">{preset.title}</div>
-                  <div className="text-[11px] text-slate-400 line-clamp-1">{preset.text}</div>
+                  <div className="font-semibold text-slate-900 group-hover:text-teal-800">{preset.title}</div>
+                  <div className="text-[11px] text-slate-500 line-clamp-1">{preset.text}</div>
                 </div>
-                <Volume2 className="w-4 h-4 text-cyan-400 shrink-0 ml-2 group-hover:scale-110" />
+                <Volume2 className="w-4 h-4 text-teal-700 shrink-0 ml-2 group-hover:scale-110" />
               </div>
             ))}
           </div>
@@ -256,29 +218,29 @@ export const VoiceBroadcastModal: React.FC<VoiceBroadcastModalProps> = ({ isOpen
 
         {/* Custom Textarea */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5">Custom Audio Broadcast:</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5">Custom Audio Broadcast:</label>
           <textarea
             rows={3}
             value={customText}
             onChange={(e) => setCustomText(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:outline-none focus:border-cyan-500"
+            className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-teal-700"
           />
         </div>
 
         {/* Speak Button */}
-        <div className="flex items-center justify-end space-x-3 pt-2">
+        <div className="flex items-center justify-end space-x-3 pt-2 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs font-semibold"
+            className="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 text-xs font-semibold"
           >
             Close
           </button>
           <button
             onClick={() => handleSpeak(customText)}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-bold text-xs shadow-glow-cyan flex items-center space-x-2 transition-all"
+            className="px-5 py-2.5 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs shadow-sm flex items-center space-x-2 transition-all"
           >
-            <Radio className="w-4 h-4 text-slate-950 animate-pulse" />
+            <Radio className="w-4 h-4" />
             <span>Broadcast Live Audio Alert</span>
           </button>
         </div>

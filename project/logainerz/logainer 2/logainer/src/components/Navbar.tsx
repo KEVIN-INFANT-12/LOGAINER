@@ -9,10 +9,7 @@ import {
   UserCheck, 
   ChevronDown, 
   RotateCcw,
-  Sparkles,
   AlertTriangle,
-  Layers,
-  Database,
   Lock,
   ShieldCheck
 } from 'lucide-react';
@@ -64,43 +61,41 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoiceModal }) => {
   ];
 
   return (
-    <header className="h-16 border-b border-white/10 bg-[#0B0F19]/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between z-30 sticky top-0">
+    <header className="h-16 border-b border-slate-200/90 bg-white px-4 sm:px-6 flex items-center justify-between z-30 sticky top-0 shadow-sm">
       {/* Brand & Region Title */}
       <div className="flex items-center space-x-3">
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-teal-500 to-emerald-400 p-[1px] shadow-glow-cyan">
-          <div className="w-full h-full bg-[#0B0F19] rounded-xl flex items-center justify-center">
-            <Radio className="w-5 h-5 text-cyan-400 animate-pulse" />
-          </div>
+        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-teal-700 text-white shadow-sm">
+          <Radio className="w-5 h-5 text-white" />
         </div>
 
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900">
               {t('app_title')}
             </h1>
-            <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-md bg-teal-50 text-teal-800 border border-teal-200">
               NER Grid v2.0
             </span>
           </div>
-          <p className="hidden md:block text-[11px] text-slate-400 font-medium">
+          <p className="hidden md:block text-[11px] text-slate-500 font-medium">
             {t('app_subtitle')}
           </p>
         </div>
       </div>
 
       {/* Real-time Telemetry Status Bar */}
-      <div className="hidden lg:flex items-center space-x-4 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-white/5 text-xs font-mono">
-        <div className="flex items-center space-x-1.5 text-slate-300">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+      <div className="hidden lg:flex items-center space-x-3 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+        <div className="flex items-center space-x-1.5 text-emerald-800 font-medium">
+          <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
           <span>{vehicles.length} {t('active_fleets')}</span>
         </div>
-        <span className="text-slate-600">|</span>
-        <div className="flex items-center space-x-1.5 text-rose-400 font-semibold">
-          <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+        <span className="text-slate-300">|</span>
+        <div className="flex items-center space-x-1.5 text-red-700 font-medium">
+          <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
           <span>{blockedCount} {t('chokepoints_blocked')}</span>
         </div>
-        <span className="text-slate-600">|</span>
-        <div className="flex items-center space-x-1.5 text-amber-300">
+        <span className="text-slate-300">|</span>
+        <div className="flex items-center space-x-1.5 text-amber-800 font-medium">
           <span>{criticalDistrictsCount} {t('deficit_districts')}</span>
         </div>
       </div>
@@ -110,14 +105,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoiceModal }) => {
         {/* Disaster Mode Trigger */}
         <button
           onClick={handleDisasterClick}
-          className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md ${
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm ${
             isDisasterModeActive
-              ? 'bg-rose-600 text-white animate-pulse shadow-glow-rose'
-              : 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30'
+              ? 'bg-red-600 text-white animate-pulse'
+              : 'bg-red-50 hover:bg-red-100 text-red-700 border border-red-200'
           }`}
           title="Simulate severe monsoon cloudburst triggering automated green corridors"
         >
-          <ShieldAlert className="w-4 h-4 text-rose-400" />
+          <ShieldAlert className="w-4 h-4 text-red-600" />
           <span className="hidden sm:inline">
             {isDisasterModeActive ? t('reset_alert') : t('simulate_red_alert')}
           </span>
@@ -126,52 +121,48 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoiceModal }) => {
         {/* Voice Announcement Broadcast Button */}
         <button
           onClick={onOpenVoiceModal}
-          className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/20 transition-colors"
+          className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-colors shadow-sm"
           title="Multilingual audio broadcasts for truck drivers"
         >
-          <Volume2 className="w-4 h-4 text-cyan-400" />
+          <Volume2 className="w-4 h-4 text-teal-700" />
           <span className="hidden md:inline">{t('audio_broadcast')}</span>
         </button>
 
         {/* Minimal Offline / Online & Synchronization Indicator */}
         <div className="flex items-center space-x-1.5">
           {isOnline ? (
-            <div className="flex items-center space-x-1.5">
-              <button
-                onClick={() => syncOfflineData()}
-                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-colors"
-                title="Connected to Central Command. Click to sync."
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="font-mono text-[11px]">🟢 Online — {pendingOfflineCount > 0 ? `📤 ${pendingOfflineCount} pending upload` : 'Synced'}</span>
-                {isSyncing && <RotateCcw className="w-3 h-3 text-cyan-400 animate-spin ml-1" />}
-              </button>
-            </div>
+            <button
+              onClick={() => syncOfflineData()}
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition-colors"
+              title="Connected to Central Command. Click to sync."
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span className="font-medium text-[11px]">🟢 Online — {pendingOfflineCount > 0 ? `📤 ${pendingOfflineCount} pending upload` : 'Synced'}</span>
+              {isSyncing && <RotateCcw className="w-3 h-3 text-teal-700 animate-spin ml-1" />}
+            </button>
           ) : (
-            <div className="flex items-center space-x-1.5">
-              <button
-                onClick={() => syncOfflineData()}
-                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-colors animate-pulse"
-                title="Offline Mode Active. Using cached trip & route data. Reports queued locally in IndexedDB."
-              >
-                <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                <span className="font-mono text-[11px]">🔴 Offline — Using cached data</span>
-                {pendingOfflineCount > 0 && (
-                  <span className="bg-amber-500 text-black text-[9px] px-1.5 py-0.2 rounded-full font-bold">
-                    📤 {pendingOfflineCount}
-                  </span>
-                )}
-              </button>
-            </div>
+            <button
+              onClick={() => syncOfflineData()}
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors"
+              title="Offline Mode Active. Using cached trip & route data. Reports queued locally in IndexedDB."
+            >
+              <span className="w-2 h-2 rounded-full bg-red-600"></span>
+              <span className="font-medium text-[11px]">🔴 Offline — Using cached data</span>
+              {pendingOfflineCount > 0 && (
+                <span className="bg-amber-600 text-white text-[9px] px-1.5 py-0.2 rounded-full font-bold">
+                  📤 {pendingOfflineCount}
+                </span>
+              )}
+            </button>
           )}
 
-          {/* Quick Offline Simulation Toggle for Testing */}
+          {/* Quick Offline Simulation Toggle for Field Testing */}
           <button
             onClick={toggleOfflineSimulation}
-            className={`px-2 py-1 rounded text-[10px] font-mono border transition-all ${
+            className={`px-2 py-1 rounded text-[11px] font-medium border transition-all ${
               isOfflineSimulated
-                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                : 'bg-slate-800 text-slate-400 border-white/5 hover:text-slate-200'
+                ? 'bg-amber-100 text-amber-900 border-amber-300 font-semibold'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
             }`}
             title="Toggle simulated hill zero-connectivity mode for field testing"
           >
@@ -183,16 +174,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoiceModal }) => {
         <div className="relative">
           <button
             onClick={() => setIsLangOpen(!isLangOpen)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm"
           >
-            <Languages className="w-3.5 h-3.5 text-cyan-400" />
+            <Languages className="w-3.5 h-3.5 text-teal-700" />
             <span className="font-semibold uppercase">{language}</span>
             <ChevronDown className="w-3 h-3 text-slate-400" />
           </button>
 
           {isLangOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-xl glass-panel-glow py-2 shadow-2xl z-50 animate-in fade-in zoom-in-95 max-h-80 overflow-y-auto">
-              <div className="px-3 py-1 text-[10px] uppercase font-bold text-cyan-400 border-b border-white/10 sticky top-0 bg-[#0B0F19]/90 backdrop-blur-md">
+            <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white border border-slate-200 py-2 shadow-modal z-50 animate-in fade-in zoom-in-95 max-h-80 overflow-y-auto">
+              <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-100 sticky top-0 bg-white">
                 Select Interface Language
               </div>
               {LANGUAGES.map((lang) => (
@@ -202,8 +193,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoiceModal }) => {
                     setLanguage(lang.code);
                     setIsLangOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-cyan-500/10 transition-colors ${
-                    language === lang.code ? 'text-cyan-400 font-bold bg-cyan-500/10' : 'text-slate-300'
+                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                    language === lang.code ? 'text-teal-800 font-bold bg-teal-50/60' : 'text-slate-700'
                   }`}
                 >
                   <span className="flex items-center space-x-2">
@@ -217,44 +208,44 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoiceModal }) => {
           )}
         </div>
 
-        {/* User Role Switcher Dropdown with 🔒 Lock Indicator */}
+        {/* User Role Switcher Dropdown */}
         <div className="relative">
           <button
             onClick={() => setIsRoleOpen(!isRoleOpen)}
-            className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10"
-            title="Admin & District Authority Access (Argon2 / JWT Secure)"
+            className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 shadow-sm"
+            title="Admin & District Authority Access"
           >
-            <div className="relative w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold text-xs">
-              <Lock className="w-3 h-3 text-cyan-400" />
+            <div className="relative w-6 h-6 rounded-md bg-teal-50 text-teal-800 flex items-center justify-center font-bold text-xs border border-teal-200">
+              <Lock className="w-3 h-3 text-teal-700" />
             </div>
             <div className="hidden xl:block text-left">
-              <div className="text-[11px] font-semibold truncate max-w-[120px] flex items-center space-x-1">
+              <div className="text-[11px] font-bold text-slate-900 truncate max-w-[120px] flex items-center space-x-1">
                 <span>{user?.full_name}</span>
               </div>
-              <div className="text-[9px] text-cyan-400 truncate max-w-[120px]">{user?.role}</div>
+              <div className="text-[10px] text-teal-700 truncate max-w-[120px] font-medium">{user?.role}</div>
             </div>
             <ChevronDown className="w-3 h-3 text-slate-400" />
           </button>
 
           {isRoleOpen && (
-            <div className="absolute right-0 mt-2 w-64 rounded-xl glass-panel-glow p-3 shadow-2xl z-50 animate-in fade-in zoom-in-95">
-              <div className="pb-2 border-b border-white/10 mb-2">
+            <div className="absolute right-0 mt-2 w-64 rounded-xl bg-white border border-slate-200 p-3 shadow-modal z-50 animate-in fade-in zoom-in-95">
+              <div className="pb-2.5 border-b border-slate-100 mb-2">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-bold text-white flex items-center space-x-1">
-                    <Lock className="w-3 h-3 text-cyan-400" />
+                  <div className="text-xs font-bold text-slate-900 flex items-center space-x-1.5">
+                    <Lock className="w-3.5 h-3.5 text-teal-700" />
                     <span>{user?.full_name}</span>
                   </div>
-                  <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                  <span className="text-[9px] font-mono text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold">
                     AUTHENTICATED
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">{user?.department}</div>
-                <div className="text-[10px] text-cyan-400 font-mono mt-0.5">Jurisdiction: {user?.state}</div>
+                <div className="text-[11px] text-slate-500 mt-1">{user?.department}</div>
+                <div className="text-[10px] text-teal-700 font-medium mt-0.5">Jurisdiction: {user?.state}</div>
               </div>
 
               <div className="text-[10px] uppercase font-bold text-slate-400 mb-1.5 flex items-center space-x-1">
-                <ShieldCheck className="w-3 h-3 text-cyan-400" />
-                <span>Admin Authority Roles:</span>
+                <ShieldCheck className="w-3 h-3 text-teal-700" />
+                <span>Switch Authority Persona:</span>
               </div>
               <div className="space-y-1">
                 {ROLES.map((r) => (
@@ -264,12 +255,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoiceModal }) => {
                       switchRole(r);
                       setIsRoleOpen(false);
                     }}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between hover:bg-white/5 transition-colors ${
-                      user?.role === r ? 'bg-cyan-500/20 text-cyan-300 font-semibold' : 'text-slate-300'
+                    className={`w-full text-left px-2.5 py-2 rounded-lg text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                      user?.role === r ? 'bg-teal-50 text-teal-900 font-bold border border-teal-200' : 'text-slate-700'
                     }`}
                   >
                     <span>{r}</span>
-                    {user?.role === r && <span className="text-cyan-400 text-xs">✓</span>}
+                    {user?.role === r && <span className="text-teal-700 text-xs font-bold">✓</span>}
                   </button>
                 ))}
               </div>

@@ -23,8 +23,8 @@ const AppContent: React.FC = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-[#0B0F19] text-slate-100 overflow-hidden select-none">
-      {/* Top GovTech Navbar */}
+    <div className="flex flex-col h-screen w-screen bg-[#F8F9FA] text-slate-900 overflow-hidden select-none">
+      {/* Top GovTech Operations Navbar */}
       <Navbar
         onOpenVoiceModal={() => setIsVoiceModalOpen(true)}
       />
@@ -35,7 +35,7 @@ const AppContent: React.FC = () => {
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Dynamic Module Container */}
-        <main className="flex-1 overflow-y-auto bg-[#06090E]/60 p-2 sm:p-4 relative">
+        <main className="flex-1 overflow-y-auto bg-[#F8F9FA] p-3 sm:p-5 relative">
           {activeTab === 'gis-map' && <GISMap />}
           {activeTab === 'route-optimizer' && <RouteOptimizer />}
           {activeTab === 'fleet-telemetry' && <FleetTracker />}

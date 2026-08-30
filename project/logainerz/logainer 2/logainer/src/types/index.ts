@@ -442,3 +442,164 @@ export interface NetworkHealthState {
   latencyMs?: number;
 }
 
+// ----------------- What-If Scenario Simulator Types -----------------
+
+export type WhatIfScenarioType = 
+  | 'continuous_rainfall'
+  | 'extreme_rainfall'
+  | 'road_blockage'
+  | 'bridge_failure'
+  | 'traffic_surge'
+  | 'combined';
+
+export interface WhatIfAffectedRoad {
+  segment_id: string;
+  name: string;
+  highway: string;
+  district: string;
+  state: string;
+  lat: number;
+  lng: number;
+  u: string;
+  v: string;
+  terrain: string;
+  current_risk: number;
+  scenario_risk: number;
+  risk_delta: number;
+  current_level: string;
+  scenario_level: string;
+  transition: string;
+  road_status: string;
+  predicted_disruption: string;
+  estimated_delay_hours: number;
+  is_predicted_high_risk: boolean;
+  connected_areas: string[];
+}
+
+export interface WhatIfAffectedArea {
+  area_name: string;
+  district: string;
+  state: string;
+  current_accessibility: string;
+  future_accessibility: string;
+  primary_connecting_road: string;
+  is_isolated: boolean;
+  alternative_connection: string;
+  detour_additional_km: number;
+  detour_additional_hours: number;
+}
+
+export interface WhatIfImpactedTrip {
+  trip_id: string;
+  trip_code: string;
+  driver_name: string;
+  driver_phone: string;
+  vehicle_no: string;
+  commodity_type: string;
+  is_critical_cargo: boolean;
+  origin_name: string;
+  destination_name: string;
+  current_route: string;
+  proximity_affected_road: string;
+  predicted_risk_score: number;
+  status: 'SAFE' | 'MONITOR' | 'REROUTING_RECOMMENDED' | 'CRITICAL';
+  status_badge: string;
+  action_recommended: string;
+  estimated_delay_mins: number;
+}
+
+export interface WhatIfKPISummary {
+  high_risk_roads_count: number;
+  medium_risk_roads_count: number;
+  potentially_isolated_areas_count: number;
+  impacted_active_trips_count: number;
+  total_active_trips_monitored: number;
+  estimated_average_delay_hours: number;
+}
+
+export interface WhatIfSimulationResult {
+  scenario_id: string;
+  created_at: string;
+  created_by: string;
+  scenario_type: WhatIfScenarioType;
+  district: string;
+  district_metadata: any;
+  duration_days: number;
+  rainfall_multiplier: number;
+  prediction_horizon: string;
+  predicted_risk_score: number;
+  predicted_risk_level: string;
+  confidence: number;
+  simulation_label: string;
+  kpi_summary: WhatIfKPISummary;
+  affected_roads: WhatIfAffectedRoad[];
+  affected_areas: WhatIfAffectedArea[];
+  logistics_impact: {
+    impacted_trips: WhatIfImpactedTrip[];
+    critical_trips_count: number;
+    reroute_recommendations_count: number;
+  };
+  candidate_routes: any[];
+  recommended_route: any;
+  model_metadata: {
+    model_name: string;
+    model_version: string;
+    temporal_sequence_frames: number;
+    spatial_grid_dim: string;
+    input_channels_count: number;
+    weights_loaded: boolean;
+  };
+}
+
+export interface WhatIfComparisonItem {
+  multiplier: number;
+  label: string;
+  overall_risk_score: number;
+  risk_level: string;
+  high_risk_roads_count: number;
+  isolated_areas_count: number;
+  impacted_trips_count: number;
+  estimated_avg_delay_hours: number;
+  roads: {
+    segment_id: string;
+    name: string;
+    scenario_risk: number;
+    scenario_level: string;
+  }[];
+}
+
+export interface WhatIfComparisonResponse {
+  success: boolean;
+  district: string;
+  duration_days: number;
+  comparison: WhatIfComparisonItem[];
+}
+
+export interface WhatIfAuditLogItem {
+  log_id: string;
+  user_id: string;
+  username: string;
+  action: string;
+  details: any;
+  ip_address: string;
+  timestamp: string;
+}
+
+export interface EmergencyAlert {
+  emergency_id: string;
+  sender_user_id: string;
+  sender_role: string;
+  sender_name: string;
+  emergency_type: string;
+  message: string;
+  latitude: number;
+  longitude: number;
+  location_name: string;
+  status: 'ACTIVE' | 'RESOLVED';
+  resolved_by?: string;
+  resolved_at?: string;
+  created_at: string;
+  timestamp?: string;
+}
+
+

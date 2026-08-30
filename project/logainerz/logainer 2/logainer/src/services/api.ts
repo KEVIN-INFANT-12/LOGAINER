@@ -229,8 +229,10 @@ export const api = {
 
   // Trip Management & Safe Halts
   createTrip: async (tripData: {
-    origin_id: string;
-    destination_id: string;
+    origin_id?: string;
+    destination_id?: string;
+    origin?: { hub_id?: string; name?: string; lat?: number; lng?: number };
+    destination?: { hub_id?: string; name?: string; lat?: number; lng?: number };
     commodity_type: string;
     package_details: string;
     driver_id: string;
@@ -239,47 +241,83 @@ export const api = {
     vehicle_no: string;
     priority: string;
     assigned_route_id?: string;
+    assigned_route_name?: string;
+    waypoints?: any[];
   }): Promise<{ success: boolean; message: string; trip: TripItem }> => {
+    const originId = tripData.origin_id || tripData.origin?.hub_id || 'GHY';
+    const destId = tripData.destination_id || tripData.destination?.hub_id || 'TWG';
+    const payload = {
+      origin_id: originId,
+      destination_id: destId,
+      commodity_type: tripData.commodity_type || 'ESSENTIAL_MEDICINES_COLD_CHAIN',
+      package_details: tripData.package_details || 'Essential Medical Supplies',
+      driver_id: tripData.driver_id || 'DRV-102',
+      driver_name: tripData.driver_name || 'Tenzing Norbu',
+      vehicle_id: tripData.vehicle_id || 'TRUCK-TN-402',
+      vehicle_no: tripData.vehicle_no || 'AS-01-EC-9081',
+      priority: tripData.priority || 'EMERGENCY',
+      assigned_route_id: tripData.assigned_route_id || 'ROUTE-A',
+    };
+
     try {
       if (networkService.isOnline()) {
         const res = await fetch(`${API_BASE}/routes/trips`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(tripData)
+          body: JSON.stringify(payload)
         });
         if (res.ok) {
           const data = await res.json();
-          return data;
+          if (data && data.trip) {
+            return data;
+          }
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          console.warn('[api] Server rejected trip creation:', errData);
+          if (errData.detail) {
+            throw new Error(errData.detail);
+          }
         }
       }
-    } catch {}
+    } catch (err: any) {
+      if (err.message && !err.message.includes('fetch')) {
+        throw err;
+      }
+      console.warn('[api] Online createTrip failed, fallback to offline local store:', err);
+    }
 
     // Offline trip creation fallback
     const tripId = `TR-${Date.now().toString(36).slice(-4).toUpperCase()}`;
+    const origNode = LOGISTICS_HUBS.find(h => h.hub_id === originId) || { name: originId, lat: 26.1445, lng: 91.7362 };
+    const destNode = LOGISTICS_HUBS.find(h => h.hub_id === destId) || { name: destId, lat: 27.5860, lng: 91.8594 };
+
     const newTrip: TripItem = {
       trip_id: tripId,
-      origin_id: tripData.origin_id,
-      origin_name: tripData.origin_id,
-      destination_id: tripData.destination_id,
-      destination_name: tripData.destination_id,
-      commodity_type: tripData.commodity_type,
-      package_details: tripData.package_details,
-      driver_id: tripData.driver_id,
-      driver_name: tripData.driver_name,
+      trip_code: tripId,
+      origin_id: originId,
+      origin_name: origNode.name || originId,
+      destination_id: destId,
+      destination_name: destNode.name || destId,
+      commodity_type: payload.commodity_type,
+      package_details: payload.package_details,
+      driver_id: payload.driver_id,
+      driver_name: payload.driver_name,
       driver_phone: '+91 98624-55102',
-      vehicle_id: tripData.vehicle_id,
-      vehicle_no: tripData.vehicle_no,
-      priority: tripData.priority as any,
+      vehicle_id: payload.vehicle_id,
+      vehicle_no: payload.vehicle_no,
+      priority: payload.priority as any,
       status: 'ASSIGNED',
-      assigned_route_id: tripData.assigned_route_id || 'ROUTE-A',
-      assigned_route_name: 'Assigned Corridor',
+      assigned_route_id: payload.assigned_route_id || 'ROUTE-A',
+      assigned_route_name: tripData.assigned_route_name || 'Assigned Corridor',
       distance_km: 110,
-      eta_display: '2h 45m',
+      duration_mins: 140,
+      eta_display: '2h 20m',
       convlstm_risk_score: 0.25,
       risk_level: 'LOW',
       created_at: new Date().toISOString(),
-      current_lat: 26.1445,
-      current_lng: 91.7362,
+      assigned_at: new Date().toISOString(),
+      current_lat: origNode.lat || 26.1445,
+      current_lng: origNode.lng || 91.7362,
       progress_pct: 0,
       speed_kmh: 0,
       connectivity: 'OFFLINE'
@@ -287,9 +325,14 @@ export const api = {
 
     return {
       success: true,
-      message: 'Trip created in local offline storage. Will sync when online.',
+      message: 'Trip created and saved locally.',
       trip: newTrip
     };
+  },
+
+  createTripAssignment: async (tripData: any): Promise<TripItem> => {
+    const res = await api.createTrip(tripData);
+    return res.trip;
   },
 
   listTrips: async (status?: string, driverId?: string): Promise<{ success: boolean; count: number; trips: TripItem[] }> => {
@@ -709,5 +752,99 @@ export const api = {
       synoptic_situation: 'Offline mode active - using cached weather radar.',
       is_cached_offline: true
     };
+  },
+
+  // ----------------- What-If Scenario Simulator -----------------
+
+  simulateWhatIfScenario: async (params: {
+    scenario_type: string;
+    duration_days: number;
+    rainfall_multiplier: number;
+    district: string;
+    region?: string;
+    parameters?: Record<string, any>;
+  }) => {
+    const res = await fetch(`${API_BASE}/what-if/simulate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: 'Simulation request failed' }));
+      throw new Error(err.detail || 'Prediction unavailable — insufficient data');
+    }
+    const data = await res.json();
+    return data.scenario;
+  },
+
+  compareWhatIfScenarios: async (params: {
+    district: string;
+    duration_days: number;
+    multipliers?: number[];
+  }) => {
+    const res = await fetch(`${API_BASE}/what-if/compare`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) {
+      throw new Error('Failed to compute scenario comparison matrix');
+    }
+    const data = await res.json();
+    return data.comparison;
+  },
+
+  getWhatIfSavedScenarios: async () => {
+    const res = await fetch(`${API_BASE}/what-if/scenarios`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.scenarios || [];
+  },
+
+  getWhatIfAuditLogs: async () => {
+    const res = await fetch(`${API_BASE}/what-if/audit-logs`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.audit_logs || [];
+  },
+
+  // ----------------- Emergency Alerts API -----------------
+
+  getEmergencies: async (status?: string) => {
+    const url = status ? `${API_BASE}/emergencies?status=${status}` : `${API_BASE}/emergencies`;
+    const res = await fetch(url).catch(() => null);
+    if (!res || !res.ok) return [];
+    const data = await res.json();
+    return data.emergencies || [];
+  },
+
+  createEmergency: async (payload: {
+    emergency_type: string;
+    latitude: number;
+    longitude: number;
+    location_name?: string;
+    sender_role?: string;
+    sender_name?: string;
+    sender_user_id?: string;
+    message?: string;
+  }) => {
+    const res = await fetch(`${API_BASE}/emergencies`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Failed to create emergency alert');
+    return await res.json();
+  },
+
+  resolveEmergency: async (emergencyId: string, resolvedBy: string = 'Admin') => {
+    const res = await fetch(`${API_BASE}/emergencies/${emergencyId}/resolve`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resolved_by: resolvedBy })
+    });
+    if (!res.ok) throw new Error('Failed to resolve emergency');
+    return await res.json();
   }
 };
+
