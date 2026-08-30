@@ -2110,6 +2110,39 @@ function NavigationScreen({
     }
   };
 
+  const handleFinishNavigation = async () => {
+    setFinishingTrip(true);
+    try {
+      // 1. Stop vehicle simulation animation loop immediately
+      setSimStatus('completed');
+      if (animFrameIdRef.current) {
+        cancelAnimationFrame(animFrameIdRef.current);
+        animFrameIdRef.current = null;
+      }
+      lastAnimTimeRef.current = null;
+
+      // 2. Stop turn-by-turn speech and hazard voice announcements
+      cancelSpeech();
+      spokenAnnouncementsRef.current.clear();
+      spokenHazardAnnouncementsRef.current.clear();
+
+      // 3. Snap vehicle position to destination
+      if (trip?.drop_lat && trip?.drop_lng) {
+        setVehiclePos({ lat: trip.drop_lat, lng: trip.drop_lng, heading: 0 });
+      }
+      setProgressKm(totalDistKm);
+      setActiveHazardAlert(null);
+
+      // 4. Complete trip in backend and database
+      await onFinishTrip();
+    } catch (err) {
+      console.error('Error finishing navigation:', err);
+    } finally {
+      setFinishingTrip(false);
+      setShowFinishConfirm(false);
+    }
+  };
+
   // Main 60 FPS Simulation Animation Loop
   useEffect(() => {
     if (simStatus !== 'running' || navMode !== 'simulation' || routeCoords.length < 2) {
@@ -2480,16 +2513,7 @@ function NavigationScreen({
               full
               size="lg"
               loading={finishingTrip}
-              onClick={async () => {
-                setFinishingTrip(true);
-                try {
-                  await onFinishTrip();
-                } catch (err) {
-                  console.error('Error completing trip:', err);
-                } finally {
-                  setFinishingTrip(false);
-                }
-              }}
+              onClick={handleFinishNavigation}
               leftIcon={<Check size={18} />}
               style={{ background: '#ffffff', color: '#047857', fontWeight: 800 }}
             >
@@ -2538,17 +2562,7 @@ function NavigationScreen({
                 size="sm"
                 style={{ flex: 1 }}
                 loading={finishingTrip}
-                onClick={async () => {
-                  setFinishingTrip(true);
-                  try {
-                    await onFinishTrip();
-                  } catch (err) {
-                    console.error('Error completing trip:', err);
-                  } finally {
-                    setFinishingTrip(false);
-                    setShowFinishConfirm(false);
-                  }
-                }}
+                onClick={handleFinishNavigation}
               >
                 Confirm Complete
               </Button>
